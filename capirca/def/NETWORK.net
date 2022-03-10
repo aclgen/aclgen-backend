@@ -1,0 +1,9 @@
+GUEST_NET = 10.10.10.0/24      # guest network range
+
+RFC1918 = 10.0.0.0/8      # non-public
+          172.16.0.0/12   # non-public
+          192.168.0.0/16  # non-public
+
+INTERNAL = RFC1918
+
+ANY = 0.0.0.0/0

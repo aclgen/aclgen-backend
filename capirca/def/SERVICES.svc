@@ -1,0 +1,7 @@
+DNS = 53/tcp  # transfers
+      53/udp  # queries
+
+
+HTTP = 80/tcp
+HTTPS = 443/tcp
+HTTP_8080 = 8080/tcp
