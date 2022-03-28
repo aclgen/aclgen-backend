@@ -1,3 +1,4 @@
 ###### Requirements without Version Specifiers ######
 django
 djangorestframework
+django-heroku
