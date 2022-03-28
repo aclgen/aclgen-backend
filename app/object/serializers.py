@@ -6,11 +6,11 @@ class ObjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Object
         fields = [
+            "id",
             "name",
             "description",
             "defs",
-            "created",
-            "updated"
+            "created_on",
+            "modified_on"
         ]
 
-        

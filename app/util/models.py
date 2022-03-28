@@ -2,8 +2,9 @@ from django.db import models
 
 
 class BaseModel(models.Model):
-    created = models.DateTimeField(auto_now_add=True, auto_now=False, blank=True, editable=False)
-    updated = models.DateTimeField(auto_now=True, blank=True, editable=False)
+    """Abstract base model"""
+    created_on = models.DateTimeField(auto_now_add=True, editable=False)
+    modified_on = models.DateTimeField(auto_now=True, editable=False)
 
     class Meta:
         abstract = True

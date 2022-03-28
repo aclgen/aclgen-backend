@@ -7,5 +7,8 @@ class Object(BaseModel):
     description = models.TextField(max_length=255)
     defs = models.JSONField(encoder=None)
 
+    class Meta:
+        verbose_name = "Object"
+
     def __str__(self):
-        return self.name
+        return f"{self.name}"
