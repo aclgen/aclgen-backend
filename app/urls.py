@@ -20,5 +20,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('rest_framework.urls')),
     path('dummy/', include('app.dummy.urls')),
-    path('object/', include('app.object.urls'))
+    path('object/', include('app.object.urls')),
+    path('rules/', include('app.rules.urls'))
 ]

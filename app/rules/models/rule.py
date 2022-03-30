@@ -1,20 +1,15 @@
-import uuid
-
 from django.db import models
 from app.rules.models.base import BaseRuleModel
 
+import uuid
 
-class RuleSet(BaseRuleModel):
+
+class Rule(BaseRuleModel):
     id = models.UUIDField(
         auto_created=True,
         primary_key=True,
         default=uuid.uuid4(),
         serialize=False,
     )
-
-    class Meta:
-        verbose_name = "Ruleset"
-
-    def __str__(self):
-        return f"{self.name}"
-
+    source = models.TextField(max_length=255)
+    destination = models.TextField(max_length=255)
