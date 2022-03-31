@@ -1,4 +1,4 @@
-from app.rules.models.base import BaseRuleModel
+from app.rules_old.models.base import BaseRuleModel
 from ruleset import RuleSet
 from django.db import models
 

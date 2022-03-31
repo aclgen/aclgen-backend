@@ -1,7 +1,7 @@
 import uuid
 
 from django.db import models
-from app.rules.models.base import BaseRuleModel
+from app.rules_old.models.base import BaseRuleModel
 
 
 class RuleSet(BaseRuleModel):

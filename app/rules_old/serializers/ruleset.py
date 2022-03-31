@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from app.rules.models.ruleset import RuleSet
+from app.rules_old.models.ruleset import RuleSet
 
 
 class RuleSetSerializer(serializers.ModelSerializer):

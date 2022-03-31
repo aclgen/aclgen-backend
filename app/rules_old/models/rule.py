@@ -1,5 +1,5 @@
 from django.db import models
-from app.rules.models.base import BaseRuleModel
+from app.rules_old.models.base import BaseRuleModel
 
 import uuid
 
@@ -13,3 +13,4 @@ class Rule(BaseRuleModel):
     )
     source = models.TextField(max_length=255)
     destination = models.TextField(max_length=255)
+    service = models.TextField(max_length=255)
