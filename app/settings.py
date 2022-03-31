@@ -44,8 +44,8 @@ INSTALLED_APPS = [
     'app.util',
     'app.dummy',
     'app.object',
-    'app.rules_old',
     'app.rules',
+    'app.service',
 ]
 
 MIDDLEWARE = [

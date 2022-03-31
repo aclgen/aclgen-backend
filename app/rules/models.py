@@ -4,6 +4,7 @@ from django.db import models
 from app.util.models import BaseModel
 from app.rules.enums import Direction, Action
 from app.object.models import Object
+from app.service.models import Service
 
 
 class BaseRuleModel(BaseModel):
@@ -30,14 +31,12 @@ class RuleSet(BaseRuleModel):
 
 
 class Rule(BaseRuleModel):
-    ruleset = models.ForeignKey(RuleSet, on_delete=models.CASCADE, related_name="ruleset")
-    #source = models.TextField(max_length=255)  # TODO: add ForeignKey --> Object (Source)
+    ruleset = models.ForeignKey(RuleSet, on_delete=models.CASCADE, related_name="rules")
     source = models.ForeignKey(Object, on_delete=models.SET(Object.get_deleted_object_dummy), related_name="source")
-    #destination = models.TextField(max_length=255)  # TODO: add ForeignKey --> Object (Dest)
     destination = models.ForeignKey(Object, on_delete=models.SET(Object.get_deleted_object_dummy), related_name="destination")
-    service = models.TextField(max_length=255)  # TODO: add ForeignKey --> Service
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="service")  # TODO: replace on delete cascade
     direction = models.CharField(max_length=64, choices=Direction.choices(), default=Direction.INBOUND)
-    action = models.TextField(max_length=64, choices=Action.choices(), default=Action.ACCEPT)
+    action = models.CharField(max_length=64, choices=Action.choices(), default=Action.ACCEPT)
 
     class Meta:
         verbose_name = "Rule"
