@@ -18,6 +18,7 @@ class Object(BaseModel):
     class Meta:
         verbose_name = "Object"
 
+    # TODO: This isn't working, find out how to deal with objects getting deleted
     def get_deleted_object_dummy(self):
         return Object.objects.get_or_create(name='Deleted Object')
 
