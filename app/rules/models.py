@@ -34,7 +34,8 @@ class Rule(BaseRuleModel):
     ruleset = models.ForeignKey(RuleSet, on_delete=models.CASCADE, related_name="rules")
     source = models.ForeignKey(Object, on_delete=models.SET(Object.get_deleted_object_dummy), related_name="source")
     destination = models.ForeignKey(Object, on_delete=models.SET(Object.get_deleted_object_dummy), related_name="destination")
-    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="service")  # TODO: replace on delete cascade
+    #service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="service")  # TODO: replace on delete cascade
+    service = models.TextField(max_length=255)
     direction = models.CharField(max_length=64, choices=Direction.choices(), default=Direction.INBOUND)
     action = models.CharField(max_length=64, choices=Action.choices(), default=Action.ACCEPT)
 

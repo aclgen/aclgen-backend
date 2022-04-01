@@ -5,6 +5,7 @@ class Protocol(Enum):
     """Enum: Protocol"""
     TCP = "TCP"
     UDP = "UDP"
+    ICMP = "ICMP"
 
     @classmethod
     def choices(cls):
