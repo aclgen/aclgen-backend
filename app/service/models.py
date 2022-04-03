@@ -14,7 +14,7 @@ class Folder(BaseModel):
         serialize=False,
     )
     name = models.TextField(max_length=64)
-    parent_folder = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
+    parent_folder = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name="children")
 
     class Meta:
         verbose_name = "Folder"
@@ -24,7 +24,7 @@ class Folder(BaseModel):
         return f"{self.id}: {self.name}"
 
 
-class ServiceCollection(BaseModel):
+class Collection(BaseModel):
     id = models.UUIDField(
         auto_created=True,
         primary_key=True,
@@ -36,7 +36,8 @@ class ServiceCollection(BaseModel):
     folder = models.ManyToManyField(Folder, related_name="folders")
 
     class Meta:
-        verbose_name = "Service Collection"
+        verbose_name = "Collection"
+        verbose_name_plural = "Collections"
 
     def __str__(self):
         return f"{self.name}"
@@ -53,7 +54,7 @@ class Service(BaseModel):
     comment = models.TextField(max_length=255)
     port = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(65535)])
     protocol = models.CharField(max_length=64, choices=Protocol.choices(), default=Protocol.UDP)
-    in_collection = models.ManyToManyField(ServiceCollection, related_name="in_collections")  # TODO: test this
+    collection = models.ManyToManyField(Collection, related_name="collections")  # TODO: test this
 
     class Meta:
         verbose_name = "Service"
