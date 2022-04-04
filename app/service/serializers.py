@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from app.service.models import Folder
+from app.service.models import Folder, Service
 
 
 class SubFolderSerializer(serializers.HyperlinkedModelSerializer):
@@ -28,4 +28,17 @@ class FolderSerializer(serializers.ModelSerializer):
             "children",
             "created_on",
             "modified_on",
+        ]
+
+
+class ServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Service
+        fields = [
+            "id",
+            "name",
+            "comment",
+            "port_start",
+            "port_end",
+            "protocol",
         ]
