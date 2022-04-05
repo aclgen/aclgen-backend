@@ -21,7 +21,7 @@ class Folder(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
 class Collection(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
     name = models.TextField(max_length=64)
     comment = models.TextField(max_length=255)
-    folder = models.ManyToManyField(Folder, related_name="collections")
+    #folder = models.ManyToManyField(Folder, related_name="collections")
 
     class Meta:
         verbose_name = "Collection"

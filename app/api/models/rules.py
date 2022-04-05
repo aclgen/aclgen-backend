@@ -18,14 +18,18 @@ class RuleSet(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
 
 
 class Rule(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
-    ruleset = models.ForeignKey(RuleSet, on_delete=models.CASCADE, related_name="rules")
+    name = models.TextField(max_length=64, blank=False)
+    comment = models.TextField(max_length=255, blank=True)
 
-    # Objects
+    # Ruleset (foreign key)
+    ruleset = models.ForeignKey(RuleSet, on_delete=models.CASCADE, related_name="ruleset_rules")
+
+    # Objects (foreign keys)
     source = models.ForeignKey(Object, on_delete=models.CASCADE, related_name="source_objects")
     destination = models.ForeignKey(Object, on_delete=models.CASCADE, related_name="dest_objects")
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="services")
 
-    # Direction & Action
+    # Direction & Action (enums)
     direction = models.CharField(max_length=64, choices=RuleDirection.choices(), default=RuleDirection.INBOUND)
     action = models.CharField(max_length=64, choices=RuleAction.choices(), default=RuleAction.ACCEPT)
 

@@ -1,17 +1,18 @@
 from rest_framework import serializers
-from app.api.models.object import Object
+from app.api.models.service import Service
 
 
-class ObjectSerializer(serializers.ModelSerializer):
+class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Object
+        model = Service
         fields = [
             "id",
             "name",
-            "comment",
+            "port_start",
+            "port_end",
+            "protocol",
             "repository",
-            "range_start",
-            "range_end",
             "created_on",
             "modified_on",
         ]
+
