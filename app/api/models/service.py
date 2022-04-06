@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from app.util.models import BaseModel
-from app.common.mixins import UUIDPrimaryMixin
+from app.common.mixins import UUIDPrimaryMixin, UUIDPrimarySelfMixin
 from app.api.enums import Protocol
 from app.api.mixins import RepositoryLinkMixin
 
@@ -27,7 +27,7 @@ class Collection(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
         verbose_name = "Collection"
 
 
-class Service(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
+class Service(UUIDPrimarySelfMixin, RepositoryLinkMixin, BaseModel):
     name = models.TextField(max_length=64)
     comment = models.TextField(max_length=255)
     port_start = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(65535)])
