@@ -9,6 +9,7 @@ class DeviceSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "type",
+            "status",
             "repository",
             "created_on",
             "modified_on",

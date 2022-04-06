@@ -11,6 +11,7 @@ class ServiceSerializer(serializers.ModelSerializer):
             "port_start",
             "port_end",
             "protocol",
+            "status",
             "repository",
             "created_on",
             "modified_on",

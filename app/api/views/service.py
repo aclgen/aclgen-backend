@@ -7,8 +7,10 @@ from app.api.serializers.service import ServiceSerializer
 
 class ServiceViewSet(
     mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
     mixins.UpdateModelMixin,
     mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
     viewsets.GenericViewSet
 ):
     queryset = Service.objects.all()
@@ -19,7 +21,7 @@ class ServiceViewSet(
             return self.kwargs.get("repo_id"), self.kwargs.get("service_id")
         return self.kwargs.get("repo_id")
 
-    def get_service(self):
+    def get_object(self):
         repo_id, service_id = self._get_values()
         return get_object_or_404(self.queryset, id=service_id, repository=repo_id)
 
@@ -44,13 +46,6 @@ class ServiceViewSet(
 
         return Response(serialized.data, status=status.HTTP_200_OK)
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_service()
-        serialized = ServiceSerializer(instance)
 
-        return Response(serialized.data, status=status.HTTP_200_OK)
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_service()
-        instance.delete()
-        return Response({"response": "Service successfully deleted"}, status=status.HTTP_200_OK)
+

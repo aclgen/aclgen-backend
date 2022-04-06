@@ -10,6 +10,7 @@ class RuleSerializer(serializers.ModelSerializer):
             "name",
             "comment",
             "device",
+            "status",
             "repository",
             "source",
             "destination",

@@ -9,6 +9,7 @@ class ObjectSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "comment",
+            "status",
             "repository",
             "range_start",
             "range_end",
