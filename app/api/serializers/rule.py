@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from app.api.models.rules import Rule, RuleSet
+from app.api.models.rules import Rule
 
 
 class RuleSerializer(serializers.ModelSerializer):
@@ -9,7 +9,7 @@ class RuleSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "comment",
-            "ruleset",
+            "device",
             "repository",
             "source",
             "destination",

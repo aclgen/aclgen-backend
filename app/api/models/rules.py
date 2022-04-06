@@ -8,21 +8,12 @@ from app.api.models.device import Device
 from app.api.enums import RuleDirection, RuleAction
 
 
-class RuleSet(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
-    name = models.TextField(max_length=64, blank=False)
-    comment = models.TextField(max_length=255, blank=True)
-    device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name="ruleset")
-
-    class Meta:
-        verbose_name = "Ruleset"
-
-
 class Rule(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
     name = models.TextField(max_length=64, blank=False)
     comment = models.TextField(max_length=255, blank=True)
 
-    # Ruleset (foreign key)
-    ruleset = models.ForeignKey(RuleSet, on_delete=models.CASCADE, related_name="ruleset_rules")
+    # Device
+    device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name="device_rules")
 
     # Objects (foreign keys)
     source = models.ForeignKey(Object, on_delete=models.CASCADE, related_name="source_objects")

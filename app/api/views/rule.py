@@ -18,18 +18,18 @@ class RuleViewSet(
         return self.kwargs.get(key)
 
     def get_object(self):
-        ruleset_id = self._get_value("ruleset_id")
+        device_id = self._get_value("dev_id")
         rule_id = self._get_value("rule_id")
 
-        return get_object_or_404(self.queryset, id=rule_id, ruleset=ruleset_id)
+        return get_object_or_404(self.queryset, id=rule_id, device=device_id)
 
     def create(self, request, *args, **kwargs):
-        ruleset_id = self._get_value("ruleset_id")
+        device_id = self._get_value("dev_id")
         repo_id = self._get_value("repo_id")
 
         data = request.data | {
             "repository": repo_id,
-            "ruleset": ruleset_id
+            "device": device_id
         }
 
         serializer = RuleSerializer(data=data)
@@ -40,9 +40,9 @@ class RuleViewSet(
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, *args, **kwargs):
-        ruleset_id = self._get_value("ruleset_id")
+        device_id = self._get_value("dev_id")
 
-        instances = self.queryset.filter(ruleset=ruleset_id)
+        instances = self.queryset.filter(device=device_id)
         serialized = RuleSerializer(instances, many=True)
 
         return Response(serialized.data, status=status.HTTP_200_OK)

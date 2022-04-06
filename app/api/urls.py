@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework import routers
-from app.api.views import repo, device, ruleset, object, service, rule
+from app.api.views import repo, device, object, service, rule
 
 # Views
 
@@ -9,9 +9,6 @@ repo_detail = repo.RepositoryViewSet.as_view({"get": "retrieve", "delete": "dest
 
 device_list = device.DeviceViewSet.as_view({"get": "list", "post": "create"})
 device_detail = device.DeviceViewSet.as_view({"get": "retrieve", "delete": "destroy"})
-
-ruleset_list = ruleset.RuleSetViewSet.as_view({"get": "list", "post": "create"})
-ruleset_detail = ruleset.RuleSetViewSet.as_view({"get": "retrieve", "delete": "destroy"})
 
 object_list = object.ObjectViewSet.as_view({"get": "list", "post": "create"})
 object_detail = object.ObjectViewSet.as_view({"get": "retrieve", "delete": "destroy"})
@@ -28,16 +25,12 @@ urlpatterns = [
     path("repo/<uuid:id>/", repo_detail, name="repository"),
 
     # Devices
-    path("repo/<uuid:repo_id>/workspace/device/", device_list, name="devices"),
-    path("repo/<uuid:repo_id>/workspace/device/<uuid:dev_id>/", device_detail, name="device"),
+    path("repo/<uuid:repo_id>/device/", device_list, name="devices"),
+    path("repo/<uuid:repo_id>/device/<uuid:dev_id>/", device_detail, name="device"),
 
-    # Rules
-    path("repo/<uuid:repo_id>/workspace/device/<uuid:dev_id>/ruleset/", ruleset_list, name="rulesets"),
-    path("repo/<uuid:repo_id>/workspace/device/<uuid:dev_id>/ruleset/<uuid:ruleset_id>/", ruleset_detail, name="ruleset"),
-
-    path("repo/<uuid:repo_id>/workspace/device/<uuid:dev_id>/ruleset/<uuid:ruleset_id>/rule/", rule_list, name="rules"),
-    path("repo/<uuid:repo_id>/workspace/device/<uuid:dev_id>/ruleset/<uuid:ruleset_id>/rule/<uuid:rule_id>/",
-         rule_detail, name="rule"),
+    # Device Rules
+    path("repo/<uuid:repo_id>/device/<uuid:dev_id>/rule/", rule_list, name="rules"),
+    path("repo/<uuid:repo_id>/device/<uuid:dev_id>/rule/<uuid:rule_id>/", rule_detail, name="rule"),
 
     # Objects
     path("repo/<uuid:repo_id>/object/", object_list, name="objects"),
