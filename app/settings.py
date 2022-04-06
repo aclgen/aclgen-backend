@@ -42,8 +42,8 @@ INSTALLED_APPS = [
     'rest_framework',
     # Internal
     'app.util',
-    'app.dummy',
-    'app.object',
+    'app.common',
+    'app.api',
 ]
 
 MIDDLEWARE = [

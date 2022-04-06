@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Object
+from app.api.models.object import Object
 
 
 class ObjectSerializer(serializers.ModelSerializer):
@@ -8,9 +8,10 @@ class ObjectSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
-            "description",
-            "defs",
+            "comment",
+            "repository",
+            "range_start",
+            "range_end",
             "created_on",
-            "modified_on"
+            "modified_on",
         ]
-
