@@ -3,9 +3,10 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from app.util.models import BaseModel
 from app.common.mixins import UUIDPrimaryMixin, UUIDPrimarySelfMixin
 from app.api.enums import Protocol
-from app.api.mixins import RepositoryLinkMixin
+from app.api.mixins import RepositoryLinkMixin, StatusFieldMixin
 
 
+# TODO: Unfinished Folder model / Model not in use
 class Folder(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
     name = models.TextField(max_length=64)
     parent_folder = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name="children")
@@ -17,7 +18,7 @@ class Folder(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
         return f"{self.id}: {self.name}"
 
 
-# TODO: Test Collection Model
+# TODO: Unfinished Collection model / Model not in use
 class Collection(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
     name = models.TextField(max_length=64)
     comment = models.TextField(max_length=255)
@@ -27,7 +28,7 @@ class Collection(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
         verbose_name = "Collection"
 
 
-class Service(UUIDPrimarySelfMixin, RepositoryLinkMixin, BaseModel):
+class Service(UUIDPrimarySelfMixin, RepositoryLinkMixin, BaseModel, StatusFieldMixin):
     name = models.TextField(max_length=64)
     comment = models.TextField(max_length=255)
     port_start = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(65535)])
@@ -38,4 +39,4 @@ class Service(UUIDPrimarySelfMixin, RepositoryLinkMixin, BaseModel):
         verbose_name = "Service"
 
     def __str__(self):
-        return f"{self.name}: {self.port}/{self.protocol}"
+        return f"{self.name}: {self.port_start} to {self.port_end} /{self.protocol}"

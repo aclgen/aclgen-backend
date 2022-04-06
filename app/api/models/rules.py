@@ -1,14 +1,14 @@
 from django.db import models
 from app.util.models import BaseModel
-from app.common.mixins import UUIDPrimaryMixin
-from app.api.mixins import RepositoryLinkMixin
+from app.common.mixins import UUIDPrimarySelfMixin
+from app.api.mixins import RepositoryLinkMixin, StatusFieldMixin
 from app.api.models.object import Object
 from app.api.models.service import Service
 from app.api.models.device import Device
 from app.api.enums import RuleDirection, RuleAction
 
 
-class Rule(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
+class Rule(UUIDPrimarySelfMixin, RepositoryLinkMixin, BaseModel, StatusFieldMixin):
     name = models.TextField(max_length=64, blank=False)
     comment = models.TextField(max_length=255, blank=True)
 

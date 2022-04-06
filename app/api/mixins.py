@@ -8,3 +8,11 @@ class RepositoryLinkMixin(models.Model):
     class Meta:
         abstract = True
 
+
+class StatusFieldMixin(models.Model):
+    """Status field to support frontend feature.
+    Field isn't saved to the database as it is static and will never change value"""
+    status = "source"
+
+    class Meta:
+        abstract = True

@@ -1,10 +1,10 @@
 from django.db import models
 from app.util.models import BaseModel
-from app.common.mixins import UUIDPrimaryMixin
-from app.api.mixins import RepositoryLinkMixin
+from app.common.mixins import UUIDPrimarySelfMixin
+from app.api.mixins import RepositoryLinkMixin, StatusFieldMixin
 
 
-class Object(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
+class Object(UUIDPrimarySelfMixin, RepositoryLinkMixin, BaseModel, StatusFieldMixin):
     name = models.TextField(max_length=32)
     comment = models.TextField(max_length=255)
     range_start = models.TextField(max_length=64)

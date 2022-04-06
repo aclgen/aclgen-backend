@@ -1,11 +1,11 @@
 from django.db import models
 from app.util.models import BaseModel
-from app.common.mixins import UUIDPrimaryMixin
-from app.api.mixins import RepositoryLinkMixin
+from app.common.mixins import UUIDPrimarySelfMixin
+from app.api.mixins import RepositoryLinkMixin, StatusFieldMixin
 from app.api.enums import DeviceType
 
 
-class Device(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
+class Device(UUIDPrimarySelfMixin, RepositoryLinkMixin, BaseModel, StatusFieldMixin):
     name = models.TextField(max_length=64)
     comment = models.TextField(max_length=255)
     type = models.CharField(max_length=64, choices=DeviceType.choices(), default=DeviceType.FIREWALL)
