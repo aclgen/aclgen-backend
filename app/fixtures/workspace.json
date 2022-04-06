@@ -1,0 +1,34 @@
+[
+  {
+    "model": "api.device",
+    "pk": "5f73a456-7243-4708-ad12-420c5fda1ad7",
+    "fields": {
+      "repository_id": "5f63a456-7243-4708-ad12-420c5fda1ad7",
+      "comment": "No comment really",
+      "created_on": "2022-04-06T09:02:07.168Z",
+      "modified_on": "2022-04-06T09:02:07.168Z",
+      "name": "Default router 1"
+    }
+  }, {
+  "model": "api.device",
+  "pk": "5f63a486-7243-4708-ad12-425c5fda1ad7",
+  "fields": {
+    "repository_id": "5f63a456-7243-4708-ad12-420c5fda1ad7",
+    "comment": "No comment really",
+    "created_on": "2022-04-06T09:02:07.168Z",
+    "modified_on": "2022-04-06T09:02:07.168Z",
+    "name": "Default router 2"
+  }
+},
+  {
+    "model": "api.device",
+    "pk": "2f63a159-7243-4708-ad12-420c5fda1ad7",
+    "fields": {
+      "repository_id": "5f63a456-7243-4708-ad12-420c5fda1ad7",
+      "comment": "No comment really",
+      "created_on": "2022-04-06T09:02:07.168Z",
+      "modified_on": "2022-04-06T09:02:07.168Z",
+      "name": "Default router 3"
+    }
+  }
+]
