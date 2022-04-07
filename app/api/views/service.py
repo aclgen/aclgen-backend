@@ -47,5 +47,15 @@ class ServiceViewSet(
         return Response(serialized.data, status=status.HTTP_200_OK)
 
 
+class ServiceBulkViewSet(
+    viewsets.GenericViewSet
+):
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+
+    # Override
+    def create(self, request, *args, **kwargs):
+        pass
+
 
 
