@@ -28,19 +28,16 @@ class ServiceViewSet(
 
         return self.queryset
 
+    def get_serializer(self, *args, **kwargs):
+        if isinstance(kwargs.get("data", {}), list):
+            kwargs["many"] = True
+
+        return super(ServiceViewSet, self).get_serializer(*args, **kwargs)
+
     def get_object(self):
         return get_object_or_404(self.get_queryset())
 
 
-class ServiceBulkViewSet(
-    viewsets.GenericViewSet
-):
-    queryset = Service.objects.all()
-    serializer_class = ServiceSerializer
-
-    # Override
-    def create(self, request, *args, **kwargs):
-        pass
 
 
 

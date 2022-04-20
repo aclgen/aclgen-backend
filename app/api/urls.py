@@ -14,7 +14,7 @@ object_detail = object.ObjectViewSet.as_view({"get": "retrieve", "delete": "dest
 
 service_list = service.ServiceViewSet.as_view({"get": "list", "post": "create"})
 service_detail = service.ServiceViewSet.as_view({"get": "retrieve", "delete": "destroy", "put": "update"})
-service_bulk = service.ServiceBulkViewSet.as_view({"post": "create"})
+#service_bulk = service.ServiceBulkViewSet.as_view({"post": "create"})
 
 rule_list = rule.RuleViewSet.as_view({"get": "list", "post": "create"})
 rule_detail = rule.RuleViewSet.as_view({"get": "retrieve", "delete": "destroy"})
@@ -39,5 +39,5 @@ urlpatterns = [
     # Services
     path("repo/<uuid:repo_id>/service/", service_list, name="services"),
     path("repo/<uuid:repo_id>/service/<uuid:service_id>/", service_detail, name="service"),
-    path("repo/<uuid:repo_id>/service/bulk", service_bulk, name="services_bulk"),
+    #path("repo/<uuid:repo_id>/service/bulk", service_bulk, name="services_bulk"),
 ]
