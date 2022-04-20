@@ -3,9 +3,12 @@ from rest_framework.exceptions import ValidationError
 from django.db import IntegrityError
 from django.utils import timezone
 from app.api.models.service import Service
+from app.api.fields import CurrentRepositoryDefault
 
 
 class ServiceSerializer(serializers.ModelSerializer):
+    repository = serializers.HiddenField(default=CurrentRepositoryDefault())
+
     class Meta:
         model = Service
         fields = [
