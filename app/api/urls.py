@@ -12,7 +12,7 @@ device_detail = device.DeviceViewSet.as_view({"get": "retrieve", "delete": "dest
 object_list = object.ObjectViewSet.as_view({"get": "list", "post": "create"})
 object_detail = object.ObjectViewSet.as_view({"get": "retrieve", "delete": "destroy", "put": "update"})
 
-service_list = service.ServiceViewSet.as_view({"get": "list", "post": "create"})
+service_list = service.ServiceViewSet.as_view({"get": "list", "post": "create", "put": "update_bulk"})
 service_detail = service.ServiceViewSet.as_view({"get": "retrieve", "delete": "destroy", "put": "update"})
 #service_bulk = service.ServiceBulkViewSet.as_view({"post": "create"})
 

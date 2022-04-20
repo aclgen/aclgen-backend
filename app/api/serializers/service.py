@@ -3,7 +3,7 @@ from rest_framework.exceptions import ValidationError
 from django.db import IntegrityError
 from django.utils import timezone
 from app.api.models.service import Service
-from app.api.fields import CurrentRepositoryDefault
+from app.api.fields import CurrentRepositoryDefault, ModelObjectIdField
 
 
 class ServiceSerializer(serializers.ModelSerializer):
@@ -24,7 +24,7 @@ class ServiceSerializer(serializers.ModelSerializer):
         ]
 
 
-class BulkServiceCreateUpdateListSerializer(serializers.ListSerializer):
+class BulkServiceCreateUpdateSerializer(serializers.ListSerializer):
     def create(self, validated_data):
         result = [self.child.create(attrs) for attrs in validated_data]
 
@@ -32,6 +32,8 @@ class BulkServiceCreateUpdateListSerializer(serializers.ListSerializer):
             self.child.Meta.model.objects.bulk_create(result)
         except IntegrityError as e:
             raise ValidationError(e)
+
+        # Update repository last modified value here
 
         return result
 
@@ -42,30 +44,60 @@ class BulkServiceCreateUpdateListSerializer(serializers.ListSerializer):
             for index, attrs in enumerate(validated_data)
         ]
 
-        writeable_fields = [
+        print(result)
+
+        writable_fields = [
             x
             for x in self.child.Meta.fields
             if x not in self.child.Meta.read_only_fields + ("repository",)
         ]
 
         if "modified_on" in self.child.Meta.fields:
-            writeable_fields += ["modified_on"]
+            writable_fields += ["modified_on"]
             modified_on = timezone.now()
             for instance in result:
                 instance.modified_on = modified_on
 
         try:
-            self.child.Meta.model.objects.bulk_update(result, writeable_fields)
+            self.child.Meta.model.objects.bulk_update(result, writable_fields)
         except IntegrityError as e:
             raise ValidationError(e)
 
         return result
 
 
+def update_repository_modified_on(instances):
+    if isinstance(instances, list):
+        repository = instances[0].repository
+        repository.modified_on = timezone.now()
+        repository.save()
+
+
 class BulkServiceSerializer(serializers.ModelSerializer):
+    repository = ModelObjectIdField()
+
+    def create(self, validated_data):
+        instance = Service(**validated_data)
+
+        if isinstance(self._kwargs["data"], dict):
+            instance.save()
+
+        return instance
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data["name"]
+        instance.port_start = validated_data["port_start"]
+        instance.port_end = validated_data["port_end"]
+        instance.protocol = validated_data["protocol"]
+
+        if isinstance(self._kwargs["data"], dict):
+            instance.save()
+
+        return instance
+
     class Meta:
         model = Service
-        fields = [
+        fields = (
             "id",
             "name",
             "port_start",
@@ -74,10 +106,13 @@ class BulkServiceSerializer(serializers.ModelSerializer):
             "repository",
             "created_on",
             "modified_on",
-        ]
-        read_only_fields = [
+            "status",
+        )
+        read_only_fields = (
             "created_on",
             "modified_on",
-        ]
-        list_serializer_class = BulkServiceCreateUpdateListSerializer
+            "status",
+        )
+        list_serializer_class = BulkServiceCreateUpdateSerializer
+
 
