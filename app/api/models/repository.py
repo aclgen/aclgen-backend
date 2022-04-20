@@ -1,5 +1,3 @@
-import uuid
-
 from django.db import models
 from app.util.models import BaseModel
 from app.common.mixins import UUIDPrimaryMixin
@@ -10,3 +8,4 @@ class Repository(UUIDPrimaryMixin, BaseModel):
 
     class Meta:
         verbose_name = "Repository"
+
