@@ -1,0 +1,19 @@
+DNS = 53/tcp  # transfers
+      53/udp  # queries
+
+
+HTTP = 80/tcp
+HTTPS = 443/tcp
+HTTP_8080 = 8080/tcp
+
+WEB_SERVICES = HTTP HTTP_8080 HTTPS  # nested web services
+
+DB_SERVICES = 3306/tcp      # allow db access
+              HTTPS         # and SSL access
+
+NYC_NETWORK = 666.1.1.0/24  # New York office
+ATL_NETWORK = 666.2.1.0/24  # Atlanta office
+DEN_NETWORK = 666.5.1.0/24  # Denver office
+REMOTE_OFFICES = NYC_NETWORK
+                 ATL_NETWORK
+                 DEN_NETWORK
