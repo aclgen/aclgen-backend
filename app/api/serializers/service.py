@@ -4,6 +4,7 @@ from django.db import IntegrityError
 from django.utils import timezone
 from app.api.models.service import Service
 from app.api.fields import CurrentRepositoryDefault, ModelObjectIdField
+from app.api.utils import update_repository_modified_on
 
 
 class ServiceSerializer(serializers.ModelSerializer):
@@ -33,7 +34,51 @@ class BulkServiceCreateUpdateSerializer(serializers.ListSerializer):
         except IntegrityError as e:
             raise ValidationError(e)
 
-        # Update repository last modified value here
+        update_repository_modified_on(result)
+
+        return result
+
+    def to_representation(self, instances):
+        repository = instances[0].repository.id
+        rep_list = []
+
+        for instance in instances:
+            rep_list.append(
+                dict(
+                    id=instance.id,
+                    name=instance.name,
+                    port_start=instance.port_start,
+                    port_end=instance.port_end,
+                    protocol=instance.protocol,
+                    status=instance.status,
+                    repository=repository,
+                    created_on=instance.created_on,
+                    modified_on=instance.modified_on,
+                )
+            )
+
+        return rep_list
+
+    def to_internal_value(self, data):
+        if not isinstance(data, list):
+            raise ValidationError("The data is invalid")
+
+        result = []
+        errors = []
+
+        for item in data:
+            try:
+                self.child.instance = self.instance.get(id=item['id']) if self.instance else None
+                self.child.initial_data = item
+                validated = self.child.run_validation(item)
+            except ValidationError as e:
+                errors.append(e.detail)
+            else:
+                result.append(validated)
+                errors.append({})
+
+        if any(errors):
+            raise ValidationError(errors)
 
         return result
 
@@ -44,13 +89,13 @@ class BulkServiceCreateUpdateSerializer(serializers.ListSerializer):
             for index, attrs in enumerate(validated_data)
         ]
 
-        print(result)
-
         writable_fields = [
             x
             for x in self.child.Meta.fields
             if x not in self.child.Meta.read_only_fields + ("repository",)
         ]
+
+        writable_fields.remove("id")
 
         if "modified_on" in self.child.Meta.fields:
             writable_fields += ["modified_on"]
@@ -63,14 +108,9 @@ class BulkServiceCreateUpdateSerializer(serializers.ListSerializer):
         except IntegrityError as e:
             raise ValidationError(e)
 
+        update_repository_modified_on(result)
+
         return result
-
-
-def update_repository_modified_on(instances):
-    if isinstance(instances, list):
-        repository = instances[0].repository
-        repository.modified_on = timezone.now()
-        repository.save()
 
 
 class BulkServiceSerializer(serializers.ModelSerializer):

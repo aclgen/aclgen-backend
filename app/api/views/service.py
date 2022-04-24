@@ -19,25 +19,13 @@ class ServiceViewSet(
     queryset = Service.objects.all()
     serializer_class = BulkServiceSerializer
 
-    # def get_queryset(self, ids=None):
-    #     repository = self.kwargs.get("repo_id")
-    #     service = self.kwargs.get("service_id")
-    #
-    #     if repository and service:
-    #         return self.queryset.filter(repository=repository, id=service)
-    #
-    #     if repository and not service:
-    #         return self.queryset.filter(repository=repository)
-    #
-    #     return self.queryset
-
     def get_queryset(self, ids=None):
         repository = self.kwargs.get("repo_id")
         service = self.kwargs.get("service_id")
 
-        print(f"Repository: {repository}")
-        print(f"Service: {service}")
-        print(f"IDs: {ids}")
+        # print(f"Repository: {repository}")
+        # print(f"Service: {service}")
+        # print(f"IDs: {ids}")
 
         if repository and ids:
             return self.queryset.filter(repository=repository, id__in=ids)
@@ -83,16 +71,15 @@ class ServiceViewSet(
             raise ValidationError("Invalid input")
 
         instances = self.get_queryset(ids=ids)
-
         serializer = self.get_serializer(instances, data=request.data, partial=False, many=True)
-
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        self.perform_update(serializer)
 
         data = serializer.data
         return Response(data)
 
-
+    def perform_update(self, serializer):
+        serializer.save()
 
 
 
