@@ -1,8 +1,11 @@
 from rest_framework import status, viewsets, mixins
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
+from rest_framework.exceptions import ValidationError
 from app.api.models.service import Service
-from app.api.serializers.service import ServiceSerializer
+from app.api.serializers.service import ServiceSerializer, BulkServiceSerializer
+from app.api.models.repository import Repository
+from app.util.validation import validate_uuids
 
 
 class ServiceViewSet(
@@ -14,38 +17,69 @@ class ServiceViewSet(
     viewsets.GenericViewSet
 ):
     queryset = Service.objects.all()
-    serializer_class = ServiceSerializer
+    serializer_class = BulkServiceSerializer
 
-    def _get_values(self, with_service_id=True):
-        if with_service_id:
-            return self.kwargs.get("repo_id"), self.kwargs.get("service_id")
-        return self.kwargs.get("repo_id")
+    def get_queryset(self, ids=None):
+        repository = self.kwargs.get("repo_id")
+        service = self.kwargs.get("service_id")
+
+        # print(f"Repository: {repository}")
+        # print(f"Service: {service}")
+        # print(f"IDs: {ids}")
+
+        if repository and ids:
+            return self.queryset.filter(repository=repository, id__in=ids)
+
+        if repository and service:
+            return self.queryset.filter(repository=repository, id=service)
+
+        if repository:
+            return self.queryset.filter(repository=repository)
+
+        return self.queryset
+
+    def get_serializer(self, *args, **kwargs):
+        if isinstance(kwargs.get("data", {}), list):
+            kwargs["many"] = True
+
+        return super(ServiceViewSet, self).get_serializer(*args, **kwargs)
 
     def get_object(self):
-        repo_id, service_id = self._get_values()
-        return get_object_or_404(self.queryset, id=service_id, repository=repo_id)
+        return get_object_or_404(self.get_queryset())
 
     def create(self, request, *args, **kwargs):
-        repo_id = self._get_values(with_service_id=False)
+        repository = Repository.objects.get(id=kwargs["repo_id"])
 
-        data = request.data | {
-            "repository": repo_id
-        }
+        if isinstance(request.data, list):
+            for item in request.data:
+                item["repository"] = repository
+        else:
+            print(request.data)
+            raise ValidationError("Invalid input")
 
-        serializer = ServiceSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return super(ServiceViewSet, self).create(request, *args, **kwargs)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def update_bulk(self, request, *args, **kwargs):
+        repository = Repository.objects.get(id=kwargs["repo_id"])
 
-    def list(self, request, *args, **kwargs):
-        repo_id = self._get_values(with_service_id=False)
-        instances = self.queryset.filter(repository=repo_id)
-        serialized = ServiceSerializer(instances, many=True)
+        ids = validate_uuids(request.data)
 
-        return Response(serialized.data, status=status.HTTP_200_OK)
+        if isinstance(request.data, list):
+            for item in request.data:
+                item["repository"] = repository
+        else:
+            raise ValidationError("Invalid input")
 
+        instances = self.get_queryset(ids=ids)
+        serializer = self.get_serializer(instances, data=request.data, partial=False, many=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        data = serializer.data
+        return Response(data)
+
+    def perform_update(self, serializer):
+        serializer.save()
 
 
 

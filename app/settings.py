@@ -97,8 +97,21 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    },
+    'default-mysql': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'aclgen',
+        'USER': 'aclgen',
+        'PASSWORD': 'H~2G$kC7UbkDkA(&',
+        'HOST': 'aprilon.org',
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
     }
 }
+
+DJANGO_DEBUG = False
 
 
 # Password validation
