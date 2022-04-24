@@ -5,3 +5,4 @@ django-heroku
 django-cors-headers
 pytest~=7.1.2
 pipe~=1.6.0
+mysqlclient
