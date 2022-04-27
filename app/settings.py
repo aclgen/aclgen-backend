@@ -26,7 +26,14 @@ SECRET_KEY = 'django-insecure-cy7!x1ioc%=u%6az+pgdmno%&s9lh9!d%f-k8u5ikygs*=hs3q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS = ["localhost", "aclgen"]
+
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'aclgen.com',
+    'api.aclgen.com',
+]
 
 PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 FIXTURE_DIRS = (
