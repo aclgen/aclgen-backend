@@ -114,9 +114,9 @@
         "comment": "No comment really",
         "created_on": "2022-04-06T09:02:07.168Z",
         "modified_on": "2022-04-06T09:02:07.168Z",
-        "source": "2f63a156-7241-4708-ad12-420c5fda1ad7",
-        "destination": "2f63a156-7241-4708-ad12-420c5fda1ad7",
-        "service": "5f63a456-7243-4708-ad12-420c8fda1ad7",
+        "sources": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "destinations": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "services": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
         "direction": "incoming",
         "action": "DENY"
     }
@@ -130,9 +130,9 @@
         "comment": "No comment really",
         "created_on": "2022-04-06T09:02:07.168Z",
         "modified_on": "2022-04-06T09:02:07.168Z",
-        "source": "2f63a156-7241-4708-ad12-420c5fda1ad7",
-        "destination": "2f63a156-7241-4708-ad12-420c5fda1ad7",
-        "service": "5f63a456-7243-4708-ad12-420c8fda1ad7",
+        "sources": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "destinations": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "services": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
         "direction": "incoming",
         "action": "DENY"
     }
@@ -146,9 +146,9 @@
         "comment": "No comment really",
         "created_on": "2022-04-06T09:02:07.168Z",
         "modified_on": "2022-04-06T09:02:07.168Z",
-        "source": "2f63a156-7241-4708-ad12-420c5fda1ad7",
-        "destination": "2f63a156-7241-4708-ad12-420c5fda1ad7",
-        "service": "5f63a456-7243-4708-ad12-420c8fda1ad7",
+        "sources": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "destinations": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "services": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
         "direction": "incoming",
         "action": "DENY"
     }
