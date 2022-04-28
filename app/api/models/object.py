@@ -14,4 +14,4 @@ class Object(UUIDPrimarySelfMixin, RepositoryLinkMixin, BaseModel, StatusFieldMi
         verbose_name = "Object"
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.id}@{self.name}"

@@ -9,7 +9,7 @@ repo_detail = repo.RepositoryViewSet.as_view({"get": "retrieve", "delete": "dest
 device_list = device.DeviceViewSet.as_view({"get": "list", "post": "create"})
 device_detail = device.DeviceViewSet.as_view({"get": "retrieve", "delete": "destroy"})
 
-object_list = object.ObjectViewSet.as_view({"get": "list", "post": "create"})
+object_list = object.ObjectViewSet.as_view({"get": "list", "post": "create", "put": "update"})
 object_detail = object.ObjectViewSet.as_view({"get": "retrieve", "delete": "destroy", "put": "update"})
 
 service_list = service.ServiceViewSet.as_view({"get": "list", "post": "create", "put": "update_bulk"})
