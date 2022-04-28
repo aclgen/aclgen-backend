@@ -1,56 +1,65 @@
-from rest_framework import status, viewsets, mixins
+from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
 from app.api.models.object import Object
+from app.api.models.repository import Repository
 from app.api.serializers.object import ObjectSerializer
+from app.util.validation import validate_uuids
 
 
 class ObjectViewSet(
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
     mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.RetrieveModelMixin,
     viewsets.GenericViewSet
 ):
     queryset = Object.objects.all()
     serializer_class = ObjectSerializer
 
-    def _get_values(self, with_object_id=True):
-        if with_object_id:
-            return self.kwargs.get("repo_id"), self.kwargs.get("object_id")
-        return self.kwargs.get("repo_id")
+    def get_queryset(self, ids=None):
+        repository = self.kwargs.get("repo_id")
+        object_id = self.kwargs.get("object_id")
+
+        if repository and ids:
+            print(self.queryset.filter(repository=repository, id__in=ids))
+            return self.queryset.filter(repository=repository, id__in=ids)
+
+        if repository and object_id:
+            return self.queryset.filter(repository=repository, id=object_id)
+
+        if repository:
+            return self.queryset.filter(repository=repository)
+
+        return self.queryset
+
+    def get_serializer(self, *args, **kwargs):
+        if isinstance(kwargs.get('data', {}), list):
+            kwargs['many'] = True
+
+        return super(ObjectViewSet, self).get_serializer(*args, **kwargs)
 
     def get_object(self):
-        repo_id, object_id = self._get_values()
+        return get_object_or_404(self.get_queryset())
 
-        return get_object_or_404(Object.objects.all(), id=object_id, repository=repo_id)
+    def update(self, request, *args, **kwargs):
+        if isinstance(request.data, list):
+            repository = Repository.objects.get(id=kwargs["repo_id"])
+            ids = validate_uuids(request.data)
 
-    def create(self, request, *args, **kwargs):
-        repo_id = self._get_values(with_object_id=False)
+            for item in request.data:
+                item["repository"] = repository
 
-        data = request.data | {
-            "repository": repo_id
-        }
+            instances = self.get_queryset(ids=ids)
+            serializer = self.get_serializer(instances, data=request.data, partial=False, many=True)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
 
-        serializer = ObjectSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            data = serializer.data
+            return Response(data)
+        else:
+            return super(ObjectViewSet, self).update(request, *args, **kwargs)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def list(self, request, *args, **kwargs):
-        repo_id = self._get_values(with_object_id=False)
-        instances = self.queryset.filter(repository=repo_id)
-        serialized = ObjectSerializer(instances, many=True)
-
-        return Response(serialized.data, status=status.HTTP_200_OK)
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serialized = ObjectSerializer(instance)
-        return Response(serialized.data, status=status.HTTP_200_OK)
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response({"response": "Object successfully deleted"}, status=status.HTTP_200_OK)
+    def perform_update(self, serializer):
+        serializer.save()

@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from app.api.models.repository import Repository
-from app.api.models.device import Device
 from django.db.models import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
+from app.api.models.repository import Repository
+from app.api.models.device import Device
 
 
 class ModelObjectIdField(serializers.Field):
