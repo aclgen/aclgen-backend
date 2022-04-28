@@ -9,50 +9,27 @@ class RuleViewSet(
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
     mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.RetrieveModelMixin,
     viewsets.GenericViewSet
 ):
     queryset = Rule.objects.all()
     serializer_class = RuleSerializer
 
-    def _get_value(self, key):
-        return self.kwargs.get(key)
+    def get_queryset(self):
+        repository = self.kwargs.get("repo_id")
+        device = self.kwargs.get("dev_id")
+        rule = self.kwargs.get("rule_id")
+
+        if repository and device and rule:
+            return self.queryset.filter(repository=repository, device=device, id=rule)
+
+        if repository and device:
+            return self.queryset.filter(repository=repository, device=device)
+
+        return self.queryset
 
     def get_object(self):
-        device_id = self._get_value("dev_id")
-        rule_id = self._get_value("rule_id")
+        return get_object_or_404(self.get_queryset())
 
-        return get_object_or_404(self.queryset, id=rule_id, device=device_id)
 
-    def create(self, request, *args, **kwargs):
-        device_id = self._get_value("dev_id")
-        repo_id = self._get_value("repo_id")
-
-        data = request.data | {
-            "repository": repo_id,
-            "device": device_id
-        }
-
-        serializer = RuleSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def list(self, request, *args, **kwargs):
-        device_id = self._get_value("dev_id")
-
-        instances = self.queryset.filter(device=device_id)
-        serialized = RuleSerializer(instances, many=True)
-
-        return Response(serialized.data, status=status.HTTP_200_OK)
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serialized = RuleSerializer(instance)
-        return Response(serialized.data, status=status.HTTP_200_OK)
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response({"response": "Rule successfully deleted"}, status=status.HTTP_200_OK)

@@ -20,3 +20,15 @@ def update_device_modified_on(instances):
         device.modified_on = timezone.now()
         device.save()
 
+
+def update_repository_modified_on_target(repository):
+    if repository:
+        repository.modified_on = timezone.now()
+        repository.save()
+
+
+def update_device_modified_on_target(device):
+    if device:
+        device.modified_on = timezone.now()
+        device.save()
+
