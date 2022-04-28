@@ -14,11 +14,17 @@ class RepositoryViewSet(
 ):
     queryset = Repository.objects.all()
     serializer_class = RepositorySerializer
-    lookup_field = "id"
 
-    def get_repo(self):
-        repository_id = self.kwargs["repository_id"]
-        return get_object_or_404(Repository.objects.all(), id=repository_id)
+    def get_queryset(self):
+        repository = self.kwargs.get("id")
+
+        if repository:
+            return self.queryset.filter(id=repository)
+
+        return self.queryset
+
+    def get_object(self):
+        return get_object_or_404(self.get_queryset())
 
 
 

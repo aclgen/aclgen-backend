@@ -23,7 +23,7 @@ class DeviceViewSet(
         if repository and device:
             return self.queryset.filter(repository=repository, id=device)
 
-        if repository and not device:
+        if repository:
             return self.queryset.filter(repository=repository)
 
         return self.queryset
