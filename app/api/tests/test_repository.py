@@ -14,6 +14,13 @@ def dummy_repository_data():
     }
 
 
+@pytest.fixture
+def repository():
+    return Repository.objects.create(
+        name='Dummy Repository'
+    )
+
+
 @pytest.mark.django_db
 class TestRepositoryCreate:
     def test_create_repository(self, client, dummy_repository_data):
@@ -30,7 +37,7 @@ class TestRepositoryCreate:
 
 
 @pytest.mark.django_db
-class TestRepositoryList:
+class TestRepositoryGetFullAndList:
     def test_list_repositories(self, client):
         url = reverse('repositories')
         response = client.get(url)
@@ -40,6 +47,50 @@ class TestRepositoryList:
 
         assert response.status_code == 200
         assert response.data == expected_data
+
+    def test_get_full_repository(self, client, repository):
+        url = reverse('repository_full', kwargs={
+            "id": repository.id
+        })
+
+        response = client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['services'] == []
+        assert response.data['devices'] == []
+        assert response.data['objects'] == []
+
+
+@pytest.mark.django_db
+class TestRepositoryUpdate:
+    def test_update_repository(self, client, repository):
+        url = reverse('repository', kwargs={
+          "id": repository.id
+        })
+
+        response = client.put(
+            url,
+            data={
+                'name': 'Updated Dummy Repository'
+            },
+            content_type="application/json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['name'] == 'Updated Dummy Repository'
+
+
+@pytest.mark.django_db
+class TestRepositoryDelete:
+    def test_delete_repository(self, client, repository):
+        url = reverse('repository', kwargs={
+            "id": repository.id
+        })
+
+        response = client.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
 
 
 
