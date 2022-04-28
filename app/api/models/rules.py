@@ -16,7 +16,6 @@ class Rule(UUIDPrimarySelfMixin, RepositoryLinkMixin, BaseModel, StatusFieldMixi
     device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name="device_rules")
 
     # Objects (foreign keys)
-    # TODO: Add relationship/ManyToManyField to models to support multiple sources/destinations/services on a rule
     # TODO: Add folder relationship (can be empty if it doesn't reference a folder!?)
     sources = models.ManyToManyField(Object, related_name="rule_sources")
     destinations = models.ManyToManyField(Object, related_name="rule_destinations")
