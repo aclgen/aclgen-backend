@@ -29,7 +29,6 @@ class RepositoryViewSet(
 
     def retrieve_full(self, *args, **kwargs):
         instance = self.get_object()
-        print(instance)
         serialized = FullRepositorySerializer(instance)
 
         return Response(serialized.data, status=status.HTTP_200_OK)
