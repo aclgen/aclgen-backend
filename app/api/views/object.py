@@ -62,5 +62,5 @@ class ObjectViewSet(
         else:
             return super(ObjectViewSet, self).update(request, *args, **kwargs)
 
-
-
+    def perform_update(self, serializer):
+        serializer.save()
