@@ -5,7 +5,7 @@ from app.api.fields import CurrentRepositoryDefault
 from app.api.utils import update_repository_modified_on_target
 
 
-class ReadDeviceSerializer(serializers.ModelSerializer):
+class FullDeviceSerializer(serializers.ModelSerializer):
     rules = RuleSerializer(many=True, read_only=True)
 
     class Meta:

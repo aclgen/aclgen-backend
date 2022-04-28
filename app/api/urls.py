@@ -5,6 +5,7 @@ from app.api.views import repo, device, object, service, rule
 
 repo_list = repo.RepositoryViewSet.as_view({"get": "list", "post": "create"})
 repo_detail = repo.RepositoryViewSet.as_view({"get": "retrieve", "delete": "destroy", "put": "update"})
+repo_full = repo.RepositoryViewSet.as_view({"get": "retrieve_full"})
 
 device_list = device.DeviceViewSet.as_view({"get": "list", "post": "create"})
 device_detail = device.DeviceViewSet.as_view({"get": "retrieve", "put": "update", "delete": "destroy"})
@@ -22,6 +23,7 @@ urlpatterns = [
     # Repos
     path("repo/", repo_list, name="repositories"),
     path("repo/<uuid:id>/", repo_detail, name="repository"),
+    path("repo/<uuid:id>/full", repo_full, name="repository_full"),
 
     # Devices
     path("repo/<uuid:repo_id>/device/", device_list, name="devices"),

@@ -1,7 +1,8 @@
 from rest_framework import status, viewsets, mixins
+from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
 from app.api.models.repository import Repository
-from app.api.serializers.repo import RepositorySerializer
+from app.api.serializers.repo import RepositorySerializer, FullRepositorySerializer
 
 
 class RepositoryViewSet(
@@ -25,6 +26,13 @@ class RepositoryViewSet(
 
     def get_object(self):
         return get_object_or_404(self.get_queryset())
+
+    def retrieve_full(self, *args, **kwargs):
+        instance = self.get_object()
+        print(instance)
+        serialized = FullRepositorySerializer(instance)
+
+        return Response(serialized.data, status=status.HTTP_200_OK)
 
 
 
