@@ -16,9 +16,9 @@ class RuleSerializer(serializers.ModelSerializer):
             "device",
             "status",
             "repository",
-            "source",
-            "destination",
-            "service",
+            "sources",
+            "destinations",
+            "services",
             "direction",
             "action"
         ]

@@ -18,9 +18,9 @@ class Rule(UUIDPrimarySelfMixin, RepositoryLinkMixin, BaseModel, StatusFieldMixi
     # Objects (foreign keys)
     # TODO: Add relationship/ManyToManyField to models to support multiple sources/destinations/services on a rule
     # TODO: Add folder relationship (can be empty if it doesn't reference a folder!?)
-    source = models.ForeignKey(Object, on_delete=models.CASCADE, related_name="source_objects")
-    destination = models.ForeignKey(Object, on_delete=models.CASCADE, related_name="dest_objects")
-    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="services")
+    sources = models.ManyToManyField(Object, related_name="rule_sources")
+    destinations = models.ManyToManyField(Object, related_name="rule_destinations")
+    services = models.ManyToManyField(Service, related_name="rule_services")
 
     # Direction & Action (enums)
     direction = models.CharField(max_length=64, choices=RuleDirection.choices(), default=RuleDirection.INBOUND)
