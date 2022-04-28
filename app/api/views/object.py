@@ -52,7 +52,6 @@ class ObjectViewSet(
                 item["repository"] = repository
 
             instances = self.get_queryset(ids=ids)
-            print("INSTANCES: ", instances)
             serializer = self.get_serializer(instances, data=request.data, partial=False, many=True)
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
