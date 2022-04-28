@@ -18,8 +18,8 @@ class FullRepositorySerializer(serializers.ModelSerializer):
             "created_on",
             "modified_on",
             "services",
-            "devices",
             "objects",
+            "devices",
         )
 
 
