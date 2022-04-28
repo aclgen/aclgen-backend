@@ -9,7 +9,7 @@ class RuleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Rule
-        fields = [
+        fields = (
             "id",
             "name",
             "comment",
@@ -20,5 +20,12 @@ class RuleSerializer(serializers.ModelSerializer):
             "destinations",
             "services",
             "direction",
-            "action"
-        ]
+            "action",
+            "created_on",
+            "modified_on",
+        )
+        read_only_fields = (
+            "created_on",
+            "modified_on",
+            "status",
+        )
