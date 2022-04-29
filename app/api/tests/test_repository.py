@@ -56,9 +56,9 @@ class TestRepositoryGetFullAndList:
         response = client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.data['services'] == []
-        assert response.data['devices'] == []
-        assert response.data['objects'] == []
+        assert isinstance(response.data['services'], list)
+        assert isinstance(response.data['devices'], list)
+        assert isinstance(response.data['objects'], list)
 
 
 @pytest.mark.django_db
