@@ -19,7 +19,8 @@ class Rule(UUIDPrimarySelfMixin, RepositoryLinkMixin, BaseModel, StatusFieldMixi
     # Objects (foreign keys)
     sources = models.ManyToManyField(Object, related_name="rule_sources")
     destinations = models.ManyToManyField(Object, related_name="rule_destinations")
-    services = models.ManyToManyField(Service, related_name="rule_services")
+    services_sources = models.ManyToManyField(Service, related_name="rule_services_source")
+    services_destinations = models.ManyToManyField(Service, related_name="rule_services_destination")
 
     # Direction & Action (enums)
     direction = models.CharField(max_length=64, choices=RuleDirection.choices(), default=RuleDirection.INBOUND)
