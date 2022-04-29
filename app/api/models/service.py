@@ -8,15 +8,15 @@ from app.api.models.repository import Repository
 
 
 # TODO: Unfinished Folder model / Model not in use
-class Folder(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
-    name = models.TextField(max_length=64)
-    parent_folder = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name="children")
-
-    class Meta:
-        verbose_name = "Folder"
-
-    def __str__(self):
-        return f"{self.id}: {self.name}"
+# class Folder(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
+#     name = models.TextField(max_length=64)
+#     parent_folder = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name="children")
+#
+#     class Meta:
+#         verbose_name = "Folder"
+#
+#     def __str__(self):
+#         return f"{self.id}: {self.name}"
 
 
 # TODO: Unfinished Collection model / Model not in use

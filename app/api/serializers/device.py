@@ -1,12 +1,14 @@
 from rest_framework import serializers
 from app.api.models.device import Device
 from app.api.serializers.rule import RuleSerializer
+from app.api.serializers.folder import DeviceFolderRulesSerializer
 from app.api.fields import CurrentRepositoryDefault
 from app.api.utils import update_repository_modified_on_target
 
 
 class FullDeviceSerializer(serializers.ModelSerializer):
     rules = RuleSerializer(many=True, read_only=True)
+    folders = DeviceFolderRulesSerializer(many=True, read_only=True)
 
     class Meta:
         model = Device
@@ -19,6 +21,7 @@ class FullDeviceSerializer(serializers.ModelSerializer):
             "created_on",
             "modified_on",
             "rules",
+            "folders",
         )
 
 

@@ -21,6 +21,7 @@ class RuleSerializer(serializers.ModelSerializer):
             "services",
             "direction",
             "action",
+            "folder",
             "created_on",
             "modified_on",
         )

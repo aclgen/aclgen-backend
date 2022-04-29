@@ -6,6 +6,7 @@ from app.api.models.object import Object
 from app.api.models.service import Service
 from app.api.models.device import Device
 from app.api.enums import RuleDirection, RuleAction
+from app.api.models.device import DeviceFolder
 
 
 class Rule(UUIDPrimarySelfMixin, RepositoryLinkMixin, BaseModel, StatusFieldMixin):
@@ -16,7 +17,6 @@ class Rule(UUIDPrimarySelfMixin, RepositoryLinkMixin, BaseModel, StatusFieldMixi
     device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name="rules")
 
     # Objects (foreign keys)
-    # TODO: Add folder relationship (can be empty if it doesn't reference a folder!?)
     sources = models.ManyToManyField(Object, related_name="rule_sources")
     destinations = models.ManyToManyField(Object, related_name="rule_destinations")
     services = models.ManyToManyField(Service, related_name="rule_services")
@@ -24,6 +24,10 @@ class Rule(UUIDPrimarySelfMixin, RepositoryLinkMixin, BaseModel, StatusFieldMixi
     # Direction & Action (enums)
     direction = models.CharField(max_length=64, choices=RuleDirection.choices(), default=RuleDirection.INBOUND)
     action = models.CharField(max_length=64, choices=RuleAction.choices(), default=RuleAction.ACCEPT)
+
+    # Folder
+    folder = models.ForeignKey(DeviceFolder, on_delete=models.CASCADE, related_name="rule_folders",
+                               blank=False, null=False)
 
     class Meta:
         verbose_name = "Rule"

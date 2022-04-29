@@ -1,5 +1,5 @@
 from django.urls import path
-from app.api.views import repo, device, object, service, rule
+from app.api.views import repo, device, object, service, rule, folder
 
 # Views
 
@@ -19,6 +19,9 @@ service_detail = service.ServiceViewSet.as_view({"get": "retrieve", "delete": "d
 rule_list = rule.RuleViewSet.as_view({"get": "list", "post": "create"})
 rule_detail = rule.RuleViewSet.as_view({"get": "retrieve", "put": "update", "delete": "destroy"})
 
+folder_list = folder.DeviceFolderViewSet.as_view({"get": "list", "post": "create"})
+folder_detail = folder.DeviceFolderViewSet.as_view({"get": "retrieve", "put": "update", "delete": "destroy"})
+
 urlpatterns = [
     # Repos
     path("repo/", repo_list, name="repositories"),
@@ -32,6 +35,10 @@ urlpatterns = [
     # Device Rules
     path("repo/<uuid:repo_id>/device/<uuid:dev_id>/rule/", rule_list, name="rules"),
     path("repo/<uuid:repo_id>/device/<uuid:dev_id>/rule/<uuid:rule_id>/", rule_detail, name="rule"),
+
+    # Folders
+    path("repo/<uuid:repo_id>/device/<uuid:dev_id>/folder/", folder_list, name="device_folders"),
+    path("repo/<uuid:repo_id>/device/<uuid:dev_id>/folder/<uuid:folder_id>/", folder_detail, name="device_folder"),
 
     # Objects
     path("repo/<uuid:repo_id>/object/", object_list, name="objects"),

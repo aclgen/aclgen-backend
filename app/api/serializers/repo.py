@@ -3,12 +3,14 @@ from app.api.models.repository import Repository
 from app.api.serializers.service import ServiceSerializer
 from app.api.serializers.object import ObjectSerializer
 from app.api.serializers.device import FullDeviceSerializer
+from app.api.serializers.folder import DeviceFolderSerializer
 
 
 class FullRepositorySerializer(serializers.ModelSerializer):
     services = ServiceSerializer(many=True, read_only=True)
     devices = FullDeviceSerializer(many=True, read_only=True)
     objects = ObjectSerializer(many=True, read_only=True, source="objectlist")
+    folders = DeviceFolderSerializer(many=True, read_only=True)
 
     class Meta:
         model = Repository
@@ -20,6 +22,7 @@ class FullRepositorySerializer(serializers.ModelSerializer):
             "services",
             "objects",
             "devices",
+            "folders",
         )
 
 
