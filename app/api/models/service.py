@@ -1,8 +1,11 @@
+import uuid
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.core.validators import MinValueValidator, MaxValueValidator
 from app.util.models import BaseModel
 from app.common.mixins import UUIDPrimaryMixin, UUIDPrimarySelfMixin
-from app.api.enums import Protocol
+from app.api.enums import Protocol, LockStatus
 from app.api.mixins import RepositoryLinkMixin, StatusFieldMixin
 from app.api.models.repository import Repository
 
@@ -38,8 +41,47 @@ class Service(UUIDPrimarySelfMixin, BaseModel, StatusFieldMixin):
     port_end = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(65535)])
     protocol = models.CharField(max_length=64, choices=Protocol.choices(), default=Protocol.UDP)
 
+    lock = models.CharField(max_length=64, choices=LockStatus.choices(), default=LockStatus.UNLOCKED)
+
     class Meta:
         verbose_name = "Service"
 
     def __str__(self):
         return f"{self.name}: {self.port_start} to {self.port_end} /{self.protocol}"
+
+
+@receiver(post_save, sender=Repository)
+def create_standard_services(sender, instance, created, **kwargs):
+    if created:
+        Service.objects.create(
+            id=uuid.uuid4(),
+            name="ANY TCP",
+            comment="Any Service Port - TCP",
+            port_start=0,
+            port_end=65535,
+            protocol="TCP",
+            repository=instance,
+            lock="IMMUTABLE"
+        )
+
+        Service.objects.create(
+            id=uuid.uuid4(),
+            name="ANY UDP",
+            comment="Any Service Port - UDP",
+            port_start=0,
+            port_end=65535,
+            protocol="UDP",
+            repository=instance,
+            lock="IMMUTABLE"
+        )
+
+        Service.objects.create(
+            id=uuid.uuid4(),
+            name="ANY ICMP",
+            comment="Any Service Port - ICMP",
+            port_start=0,
+            port_end=65535,
+            protocol="ICMP",
+            repository=instance,
+            lock="IMMUTABLE"
+        )

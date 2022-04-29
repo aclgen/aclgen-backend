@@ -28,6 +28,7 @@ class ObjectSerializer(serializers.ModelSerializer):
             "range_end",
             "created_on",
             "modified_on",
+            "lock",
         )
         read_only_fields = (
             "created_on",

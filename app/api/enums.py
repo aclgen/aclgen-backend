@@ -36,3 +36,20 @@ class RuleAction(Enum):
     @classmethod
     def choices(cls):
         return tuple((i.name, i.value) for i in cls)
+
+
+class LockStatus(Enum):
+    LOCKED = "LOCKED"
+    UNLOCKED = "UNLOCKED"
+    IMMUTABLE = "IMMUTABLE"
+
+    @classmethod
+    def choices(cls):
+        return tuple((
+            ("LOCKED", cls.LOCKED),
+            ("UNLOCKED", cls.UNLOCKED)
+        ))
+
+    @classmethod
+    def all(cls):
+        return tuple((i.name, i.value) for i in cls)

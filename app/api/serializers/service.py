@@ -28,6 +28,7 @@ class ServiceSerializer(serializers.ModelSerializer):
             "created_on",
             "modified_on",
             "status",
+            "lock",
         )
         read_only_fields = (
             "created_on",
@@ -35,5 +36,6 @@ class ServiceSerializer(serializers.ModelSerializer):
             "status",
         )
         list_serializer_class = ListServiceSerializer
+
 
 
