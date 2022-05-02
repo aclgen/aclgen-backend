@@ -9,6 +9,13 @@ from app.api.models.repository import Repository
 from app.api.enums import LockStatus
 
 
+class ObjectGroup(UUIDPrimarySelfMixin, BaseModel, StatusFieldMixin):
+    name = models.TextField(max_length=32)
+    comment = models.TextField(max_length=255)
+
+    lock = models.CharField(max_length=64, choices=LockStatus.choices(), default=LockStatus.UNLOCKED)
+
+
 class Object(UUIDPrimarySelfMixin, BaseModel, StatusFieldMixin):
     repository = models.ForeignKey(Repository, on_delete=models.CASCADE, blank=False, null=False,
                                    related_name="objectlist")
@@ -18,6 +25,8 @@ class Object(UUIDPrimarySelfMixin, BaseModel, StatusFieldMixin):
     range_end = models.TextField(max_length=64)
 
     lock = models.CharField(max_length=64, choices=LockStatus.choices(), default=LockStatus.UNLOCKED)
+
+    group = models.ManyToManyField(ObjectGroup, related_name="groupobjects", blank=True, null=True)
 
     class Meta:
         verbose_name = "Object"

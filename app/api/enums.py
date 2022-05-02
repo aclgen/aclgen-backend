@@ -11,6 +11,16 @@ class Protocol(str, Enum):
         return tuple((i.name, i.value) for i in cls)
 
 
+class ServiceType(str, Enum):
+    PORT = "PORT"
+    ICMP = "ICMP"
+    COLLECTION = "COLLECTION"
+
+    @classmethod
+    def choices(cls):
+        return tuple((i.name, i.value) for i in cls)
+
+
 class DeviceType(str, Enum):
     FIREWALL = "FIREWALL"
     CLUSTER = "CLUSTER"

@@ -5,7 +5,7 @@ from django.dispatch import receiver
 from django.core.validators import MinValueValidator, MaxValueValidator
 from app.util.models import BaseModel
 from app.common.mixins import UUIDPrimaryMixin, UUIDPrimarySelfMixin
-from app.api.enums import Protocol, LockStatus
+from app.api.enums import Protocol, LockStatus, ServiceType
 from app.api.mixins import RepositoryLinkMixin, StatusFieldMixin
 from app.api.models.repository import Repository
 
@@ -23,13 +23,12 @@ from app.api.models.repository import Repository
 
 
 # TODO: Unfinished Collection model / Model not in use
-class Collection(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
+class ServiceCollection(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
     name = models.TextField(max_length=64)
     comment = models.TextField(max_length=255)
-    #folder = models.ManyToManyField(Folder, related_name="collections")
 
     class Meta:
-        verbose_name = "Collection"
+        verbose_name = "Service Collection"
 
 
 class Service(UUIDPrimarySelfMixin, BaseModel, StatusFieldMixin):
@@ -37,9 +36,22 @@ class Service(UUIDPrimarySelfMixin, BaseModel, StatusFieldMixin):
                                    related_name="services")
     name = models.TextField(max_length=64)
     comment = models.TextField(max_length=255)
+
+    # TYPE: PORT, PORT_RANGE or COLLECTION
+    type = models.CharField(max_length=64, choices=ServiceType.choices(), default=ServiceType.PORT)
+
+    # PORT/PORT_RANGE
     port_start = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(65535)])
     port_end = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(65535)])
     protocol = models.CharField(max_length=64, choices=Protocol.choices(), default=Protocol.UDP)
+
+    # ICMP
+    icmp_type = models.IntegerField()
+    icmp_code = models.IntegerField()
+
+    # COLLECTION
+    # Service and be a part of a collection (reference to itself)
+    collection = models.ManyToManyField("self", related_name="collection_services")
 
     lock = models.CharField(max_length=64, choices=LockStatus.choices(), default=LockStatus.UNLOCKED)
 
