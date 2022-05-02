@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from app.util.models import BaseModel
 from app.common.mixins import UUIDPrimarySelfMixin, UUIDPrimaryMixin
 from app.api.mixins import StatusFieldMixin
@@ -28,3 +30,12 @@ class DeviceFolder(UUIDPrimaryMixin, BaseModel):
 
     class Meta:
         verbose_name = "Device Folder"
+
+
+@receiver(post_save, sender=Device)
+def create_standard_folder(sender, instance, created, **kwargs):
+    if created:
+        DeviceFolder.objects.create(
+            name="Default Folder",
+            device=instance
+        )
