@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class Protocol(Enum):
+class Protocol(str, Enum):
     TCP = "TCP"
     UDP = "UDP"
     ICMP = "ICMP"
@@ -11,7 +11,7 @@ class Protocol(Enum):
         return tuple((i.name, i.value) for i in cls)
 
 
-class DeviceType(Enum):
+class DeviceType(str, Enum):
     FIREWALL = "FIREWALL"
     CLUSTER = "CLUSTER"
 
@@ -20,7 +20,7 @@ class DeviceType(Enum):
         return tuple((i.name, i.value) for i in cls)
 
 
-class RuleDirection(Enum):
+class RuleDirection(str, Enum):
     INBOUND = "INBOUND"
     OUTBOUND = "OUTBOUND"
 
@@ -29,7 +29,7 @@ class RuleDirection(Enum):
         return tuple((i.name, i.value) for i in cls)
 
 
-class RuleAction(Enum):
+class RuleAction(str, Enum):
     ACCEPT = "ACCEPT"
     DENY = "DENY"
 
@@ -38,7 +38,7 @@ class RuleAction(Enum):
         return tuple((i.name, i.value) for i in cls)
 
 
-class LockStatus(Enum):
+class LockStatus(str, Enum):
     LOCKED = "LOCKED"
     UNLOCKED = "UNLOCKED"
     IMMUTABLE = "IMMUTABLE"
