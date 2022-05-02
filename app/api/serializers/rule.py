@@ -19,7 +19,7 @@ class RuleSerializer(serializers.ModelSerializer):
             "sources",
             "destinations",
             "services_sources",
-            "services_destinations"
+            "services_destinations",
             "direction",
             "action",
             "folder",
