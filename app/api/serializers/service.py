@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from app.api.models.service import Service
+from app.api.models.service import Service, ICMPService, PortRangeService, CollectionService
 from app.api.fields import CurrentRepositoryDefault
 from app.api.utils import update_repository_modified_on
 from app.common.serializers import BaseListSerializer
+from generic_relations.relations import GenericRelatedField
 
 
 class ListServiceSerializer(BaseListSerializer):
@@ -11,6 +12,66 @@ class ListServiceSerializer(BaseListSerializer):
 
     def update_parent_modified_on(self, result):
         update_repository_modified_on(result)
+
+
+class PortRangeServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PortRangeService
+        fields = (
+            "type",
+            "port_start",
+            "port_end",
+            "protocol",
+        )
+
+
+class ICMPServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ICMPService
+        fields = (
+            "type",
+            "icmp_type",
+            "icmp_code",
+        )
+
+
+class CollectionServiceSerializer(serializers.ModelSerializer):
+    services = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = CollectionService
+        fields = (
+            "type",
+            "services",
+        )
+
+
+class GenericServiceSerializer(serializers.ModelSerializer):
+    repository = serializers.HiddenField(default=CurrentRepositoryDefault())
+
+    item = GenericRelatedField({
+        PortRangeService: PortRangeServiceSerializer(),
+        ICMPService: ICMPServiceSerializer(),
+        CollectionService: CollectionServiceSerializer(),
+    })
+
+    class Meta:
+        model = Service
+        fields = (
+            "id",
+            "name",
+            "comment",
+            "repository",
+            "item",
+            "created_on",
+            "modified_on",
+            "status",
+        )
+        read_only_fields = (
+            "created_on",
+            "modified_on",
+            "status",
+        )
 
 
 class ServiceSerializer(serializers.ModelSerializer):

@@ -20,6 +20,16 @@ class DeviceType(str, Enum):
         return tuple((i.name, i.value) for i in cls)
 
 
+class ServiceType(str, Enum):
+    ICMP = "ICMP"
+    PORT = "PORT"
+    COLLECTION = "COLLECTION"
+
+    @classmethod
+    def choices(cls):
+        return tuple((i.name, i.value) for i in cls)
+
+
 class RuleDirection(str, Enum):
     INBOUND = "INBOUND"
     OUTBOUND = "OUTBOUND"
