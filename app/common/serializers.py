@@ -7,6 +7,8 @@ from django.db import IntegrityError
 
 class BaseListSerializer(serializers.ListSerializer):
     def to_internal_value(self, data):
+        print(data)
+
         if not isinstance(data, list):
             raise ValidationError("The data does not match required type (must be a list)")
 

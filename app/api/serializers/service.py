@@ -3,9 +3,9 @@ from app.api.models.service import Service
 from app.api.fields import CurrentRepositoryDefault
 from app.api.utils import update_repository_modified_on
 from app.common.serializers import BaseListSerializer
-from generic_relations.relations import GenericRelatedField
 
 
+# TODO: Fix M2M bulk update for "members" - ValueError: bulk_update() can only be used with concrete fields.
 class ListServiceSerializer(BaseListSerializer):
     def update(self, instances, validated_data):
         return super(ListServiceSerializer, self).update(instances, validated_data)
@@ -38,6 +38,7 @@ class ServiceSerializer(serializers.ModelSerializer):
             "status",
         )
         read_only_fields = (
+            # "members", TODO: fix M2M batch update here ???
             "created_on",
             "modified_on",
             "status",
@@ -48,7 +49,7 @@ class ServiceSerializer(serializers.ModelSerializer):
         if isinstance(value, int):
             return False
 
-        if not value or value == "":
+        if value is None or value == "" or not value:
             return True
 
         return False

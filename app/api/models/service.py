@@ -9,10 +9,11 @@ from app.api.enums import Protocol, LockStatus
 from app.api.mixins import StatusFieldMixin
 from app.api.models.repository import Repository
 from app.api.enums import ServiceType
+from rest_framework.exceptions import ValidationError
 
 
 class CollectionTypeService(models.Model):
-    members = models.ManyToManyField("Service", blank=True, null=True)
+    members = models.ManyToManyField("Service", blank=True)
 
     class Meta:
         abstract = True
@@ -48,9 +49,62 @@ class Service(
 
     name = models.TextField(max_length=128, blank=False, null=False)
     comment = models.TextField(max_length=255, blank=True, null=True)
-    type = models.CharField(max_length=65, choices=ServiceType.choices(), blank=False)
+    type = models.CharField(max_length=65, choices=ServiceType.choices(), blank=False, null=False)
     lock = models.CharField(max_length=64, choices=LockStatus.choices(), default=LockStatus.UNLOCKED,
                             blank=False, null=False)
+
+    class Meta:
+        verbose_name = "Service"
+        unique_together = (('id', 'repository'),)
+
+    def _validate_empty_fields(self, required_empty_fields=[]):
+        for field in self.__dict__:
+            if field in required_empty_fields and self.__dict__[field] is not None:
+                raise ValidationError({
+                    "detail": f"{field} cannot have a value as it is a service type of {self.type}"
+                })
+
+    def _validate_type_port(self):
+        if self.port_start is None:
+            raise ValidationError({"detail": "port_start must be given a value"})
+
+        if self.port_end is None:
+            raise ValidationError({"detail": "port_end must be given a value"})
+
+        if self.protocol is None:
+            raise ValidationError({"detail": "protocol must be specified"})
+
+        required_empty_fields = ["icmp_type", "icmp_code", "members"]
+        self._validate_empty_fields(required_empty_fields=required_empty_fields)
+
+    def _validate_type_icmp(self):
+        if self.icmp_type is None:
+            raise ValidationError({"detail": "icmp_type must be given a value"})
+
+        if self.icmp_code is None:
+            raise ValidationError({"detail": "icmp_code must be given a value"})
+
+        required_empty_fields = ["port_start", "port_end", "protocol", "members"]
+        self._validate_empty_fields(required_empty_fields=required_empty_fields)
+
+    def _validate_type_collection(self):
+        if self.members is None:
+            raise ValidationError({"detail": "the collection must contain members"})
+
+        required_empty_fields = ["port_start", "port_end", "protocol", "icmp_type", "icmp_code"]
+        self._validate_empty_fields(required_empty_fields=required_empty_fields)
+
+    def save(self, *args, **kwargs):
+        if self.type == ServiceType.PORT:
+            self._validate_type_port()
+
+        if self.type == ServiceType.COLLECTION:
+            self._validate_type_collection()
+
+        if self.type == ServiceType.ICMP:
+            self._validate_type_icmp()
+
+        return super().save(*args, **kwargs)
 
 
 @receiver(post_save, sender=Repository)
@@ -58,6 +112,8 @@ def create_standard_services(sender, instance, created, **kwargs):
     auto_default_creation_enabled = True
 
     if created and auto_default_creation_enabled:
+        print("Instance: ", instance)
+
         print("Debug: Creating default Service")
         # Default TCP Any Service
         default_tcp_any_service = Service.objects.create(
@@ -109,8 +165,3 @@ def create_standard_services(sender, instance, created, **kwargs):
 
         default_any_collection.members.add(default_udp_any_service)
         default_any_collection.members.add(default_tcp_any_service)
-
-    # TODO: Override save method to do error checking for to avoid fields other than its related type have data
-
-
-
