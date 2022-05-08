@@ -3,8 +3,6 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
-from django.contrib.contenttypes.models import ContentType
 from app.util.models import BaseModel
 from app.common.mixins import UUIDPrimarySelfMixin
 from app.api.enums import Protocol, LockStatus
@@ -13,46 +11,46 @@ from app.api.models.repository import Repository
 from app.api.enums import ServiceType
 
 
-class Service(UUIDPrimarySelfMixin, BaseModel, StatusFieldMixin):
+class CollectionTypeService(models.Model):
+    members = models.ManyToManyField("Service", blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
+
+class ICMPTypeService(models.Model):
+    icmp_type = models.PositiveSmallIntegerField(blank=True, null=True)
+    icmp_code = models.PositiveSmallIntegerField(blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
+
+class PortTypeService(models.Model):
+    port_start = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(65535)], blank=True, null=True)
+    port_end = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(65535)], blank=True, null=True)
+    protocol = models.CharField(max_length=64, choices=Protocol.choices(), blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
+
+class Service(
+    UUIDPrimarySelfMixin,
+    BaseModel,
+    StatusFieldMixin,
+    CollectionTypeService,
+    ICMPTypeService,
+    PortTypeService
+):
     repository = models.ForeignKey(Repository, on_delete=models.CASCADE, blank=False, null=False,
                                    related_name="services")
 
-    name = models.TextField(max_length=128)
-    comment = models.TextField(max_length=255)
-
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    item = GenericForeignKey('content_type', 'object_id')
-
-    lock = models.CharField(max_length=64, choices=LockStatus.choices(), default=LockStatus.UNLOCKED, blank=True)
-
-    class Meta:
-        verbose_name = "Service"
-        unique_together = (('id', 'repository'),)
-
-
-class CollectionService(models.Model):
-    service = GenericRelation(Service, related_query_name="service")
-    type = ServiceType.COLLECTION
-
-    services = models.ManyToManyField(Service, related_name="collection_services")
-
-
-class ICMPService(models.Model):
-    service = GenericRelation(Service, related_query_name="service")
-    type = ServiceType.ICMP
-
-    icmp_type = models.IntegerField(default=0)
-    icmp_code = models.IntegerField(default=0)
-
-
-class PortRangeService(models.Model):
-    service = GenericRelation(Service, related_query_name="service")
-    type = ServiceType.PORT
-
-    port_start = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(65535)])
-    port_end = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(65535)])
-    protocol = models.CharField(max_length=64, choices=Protocol.choices(), default=Protocol.UDP)
+    name = models.TextField(max_length=128, blank=False, null=False)
+    comment = models.TextField(max_length=255, blank=True, null=True)
+    type = models.CharField(max_length=65, choices=ServiceType.choices(), blank=False)
+    lock = models.CharField(max_length=64, choices=LockStatus.choices(), default=LockStatus.UNLOCKED,
+                            blank=False, null=False)
 
 
 @receiver(post_save, sender=Repository)
@@ -60,59 +58,59 @@ def create_standard_services(sender, instance, created, **kwargs):
     auto_default_creation_enabled = True
 
     if created and auto_default_creation_enabled:
+        print("Debug: Creating default Service")
         # Default TCP Any Service
-        default_any_tcp_service = Service.objects.create(
+        default_tcp_any_service = Service.objects.create(
             id=uuid.uuid4(),
             name="TCP Any",
             comment="TCP Any Service",
+            type="PORT",
             repository=instance,
             lock="IMMUTABLE",
-            item=PortRangeService.objects.create(
-                port_start=0,
-                port_end=65535,
-                protocol="TCP",
-            )
+            port_start=0,
+            port_end=65535,
+            protocol="TCP"
         )
 
         # Default UDP Any Service
-        default_any_udp_service = Service.objects.create(
+        default_udp_any_service = Service.objects.create(
             id=uuid.uuid4(),
             name="UDP Any",
             comment="UDP Any Service",
+            type="PORT",
             repository=instance,
             lock="IMMUTABLE",
-            item=PortRangeService.objects.create(
-                port_start=0,
-                port_end=65535,
-                protocol="UDP",
-            )
+            port_start=0,
+            port_end=65535,
+            protocol="TCP"
         )
 
-        # Default ICMP Service (test)
-        default_dummy_icmp_service = Service.objects.create(
+        # Default UDP/TCP Any Service Collection
+        default_any_collection = Service.objects.create(
             id=uuid.uuid4(),
-            name="ICMP Dummy Test",
-            comment="Testing ICMP",
+            name="TCP/UDP Any",
+            comment="TCP&UDP Service Group",
+            type="COLLECTION",
             repository=instance,
-            lock="IMMUTABLE",
-            item=ICMPService.objects.create(
-                icmp_type=0,
-                icmp_code=2,
-            )
+            lock="UNLOCKED"
         )
 
-        # Default Any Service Collection for TCP and UDP
-        any_collection_uuid = uuid.uuid4()
-
-        any_collection = Service.objects.create(
-            id=any_collection_uuid,
-            name="Any",
-            comment="Any Service for UDP and TCP",
+        # Dummy ICMP Test
+        default_dummy_icmp = Service.objects.create(
+            id=uuid.uuid4(),
+            name="Dummy ICMP",
+            comment="Dummy ICMP service",
+            type="ICMP",
             repository=instance,
             lock="UNLOCKED",
-            item=CollectionService.objects.create()
+            icmp_type=0,
+            icmp_code=2
         )
 
-        any_collection.item.services.add(default_any_udp_service)
-        any_collection.item.services.add(default_any_tcp_service)
+        default_any_collection.members.add(default_udp_any_service)
+        default_any_collection.members.add(default_tcp_any_service)
+
+    # TODO: Override save method to do error checking for to avoid fields other than its related type have data
+
+
 
