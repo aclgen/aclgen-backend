@@ -5,6 +5,7 @@ from app.api.utils import update_repository_modified_on
 from app.common.serializers import BaseListSerializer
 
 
+# TODO: Fix M2M bulk update for "members" - ValueError: bulk_update() can only be used with concrete fields.
 class ListServiceSerializer(BaseListSerializer):
     def update(self, instances, validated_data):
         return super(ListServiceSerializer, self).update(instances, validated_data)
@@ -15,27 +16,54 @@ class ListServiceSerializer(BaseListSerializer):
 
 class ServiceSerializer(serializers.ModelSerializer):
     repository = serializers.HiddenField(default=CurrentRepositoryDefault())
+    members = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Service
         fields = (
             "id",
+            "repository",
             "name",
+            "comment",
+            "type",
+            "lock",
+            "members",
+            "icmp_type",
+            "icmp_code",
             "port_start",
             "port_end",
             "protocol",
-            "repository",
             "created_on",
             "modified_on",
             "status",
-            "lock",
         )
         read_only_fields = (
+            # "members", TODO: fix M2M batch update here ???
             "created_on",
             "modified_on",
             "status",
         )
         list_serializer_class = ListServiceSerializer
+
+    def is_value_actually_empty(self, value):
+        if isinstance(value, int):
+            return False
+
+        if value is None or value == "" or not value:
+            return True
+
+        return False
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        for field in self.Meta.fields:
+            try:
+                if self.is_value_actually_empty(rep[field]):
+                    rep.pop(field)
+            except KeyError:
+                pass
+
+        return rep
 
 
 

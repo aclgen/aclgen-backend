@@ -4,84 +4,164 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import MinValueValidator, MaxValueValidator
 from app.util.models import BaseModel
-from app.common.mixins import UUIDPrimaryMixin, UUIDPrimarySelfMixin
+from app.common.mixins import UUIDPrimarySelfMixin
 from app.api.enums import Protocol, LockStatus
-from app.api.mixins import RepositoryLinkMixin, StatusFieldMixin
+from app.api.mixins import StatusFieldMixin
 from app.api.models.repository import Repository
+from app.api.enums import ServiceType
+from rest_framework.exceptions import ValidationError
 
 
-# TODO: Unfinished Folder model / Model not in use
-# class Folder(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
-#     name = models.TextField(max_length=64)
-#     parent_folder = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name="children")
-#
-#     class Meta:
-#         verbose_name = "Folder"
-#
-#     def __str__(self):
-#         return f"{self.id}: {self.name}"
-
-
-# TODO: Unfinished Collection model / Model not in use
-class Collection(UUIDPrimaryMixin, RepositoryLinkMixin, BaseModel):
-    name = models.TextField(max_length=64)
-    comment = models.TextField(max_length=255)
-    #folder = models.ManyToManyField(Folder, related_name="collections")
+class CollectionTypeService(models.Model):
+    members = models.ManyToManyField("Service", blank=True)
 
     class Meta:
-        verbose_name = "Collection"
+        abstract = True
 
 
-class Service(UUIDPrimarySelfMixin, BaseModel, StatusFieldMixin):
+class ICMPTypeService(models.Model):
+    icmp_type = models.PositiveSmallIntegerField(blank=True, null=True)
+    icmp_code = models.PositiveSmallIntegerField(blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
+
+class PortTypeService(models.Model):
+    port_start = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(65535)], blank=True, null=True)
+    port_end = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(65535)], blank=True, null=True)
+    protocol = models.CharField(max_length=64, choices=Protocol.choices(), blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
+
+class Service(
+    UUIDPrimarySelfMixin,
+    BaseModel,
+    StatusFieldMixin,
+    CollectionTypeService,
+    ICMPTypeService,
+    PortTypeService
+):
     repository = models.ForeignKey(Repository, on_delete=models.CASCADE, blank=False, null=False,
                                    related_name="services")
-    name = models.TextField(max_length=64)
-    comment = models.TextField(max_length=255)
-    port_start = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(65535)])
-    port_end = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(65535)])
-    protocol = models.CharField(max_length=64, choices=Protocol.choices(), default=Protocol.UDP)
 
-    lock = models.CharField(max_length=64, choices=LockStatus.choices(), default=LockStatus.UNLOCKED)
+    name = models.TextField(max_length=128, blank=False, null=False)
+    comment = models.TextField(max_length=255, blank=True, null=True)
+    type = models.CharField(max_length=65, choices=ServiceType.choices(), blank=False, null=False)
+    lock = models.CharField(max_length=64, choices=LockStatus.choices(), default=LockStatus.UNLOCKED,
+                            blank=False, null=False)
 
     class Meta:
         verbose_name = "Service"
+        unique_together = (('id', 'repository'),)
 
-    def __str__(self):
-        return f"{self.name}: {self.port_start} to {self.port_end} /{self.protocol}"
+    def _validate_empty_fields(self, required_empty_fields=[]):
+        for field in self.__dict__:
+            if field in required_empty_fields and self.__dict__[field] is not None:
+                raise ValidationError({
+                    "detail": f"{field} cannot have a value as it is a service type of {self.type}"
+                })
+
+    def _validate_type_port(self):
+        if self.port_start is None:
+            raise ValidationError({"detail": "port_start must be given a value"})
+
+        if self.port_end is None:
+            raise ValidationError({"detail": "port_end must be given a value"})
+
+        if self.protocol is None:
+            raise ValidationError({"detail": "protocol must be specified"})
+
+        required_empty_fields = ["icmp_type", "icmp_code", "members"]
+        self._validate_empty_fields(required_empty_fields=required_empty_fields)
+
+    def _validate_type_icmp(self):
+        if self.icmp_type is None:
+            raise ValidationError({"detail": "icmp_type must be given a value"})
+
+        if self.icmp_code is None:
+            raise ValidationError({"detail": "icmp_code must be given a value"})
+
+        required_empty_fields = ["port_start", "port_end", "protocol", "members"]
+        self._validate_empty_fields(required_empty_fields=required_empty_fields)
+
+    def _validate_type_collection(self):
+        if self.members is None:
+            raise ValidationError({"detail": "the collection must contain members"})
+
+        required_empty_fields = ["port_start", "port_end", "protocol", "icmp_type", "icmp_code"]
+        self._validate_empty_fields(required_empty_fields=required_empty_fields)
+
+    def save(self, *args, **kwargs):
+        if self.type == ServiceType.PORT:
+            self._validate_type_port()
+
+        if self.type == ServiceType.COLLECTION:
+            self._validate_type_collection()
+
+        if self.type == ServiceType.ICMP:
+            self._validate_type_icmp()
+
+        return super().save(*args, **kwargs)
 
 
 @receiver(post_save, sender=Repository)
 def create_standard_services(sender, instance, created, **kwargs):
-    if created:
-        Service.objects.create(
+    auto_default_creation_enabled = True
+
+    if created and auto_default_creation_enabled:
+        print("Instance: ", instance)
+
+        print("Debug: Creating default Service")
+        # Default TCP Any Service
+        default_tcp_any_service = Service.objects.create(
             id=uuid.uuid4(),
-            name="ANY TCP",
-            comment="Any Service Port - TCP",
+            name="TCP Any",
+            comment="TCP Any Service",
+            type="PORT",
+            repository=instance,
+            lock="IMMUTABLE",
             port_start=0,
             port_end=65535,
-            protocol="TCP",
-            repository=instance,
-            lock="IMMUTABLE"
+            protocol="TCP"
         )
 
-        Service.objects.create(
+        # Default UDP Any Service
+        default_udp_any_service = Service.objects.create(
             id=uuid.uuid4(),
-            name="ANY UDP",
-            comment="Any Service Port - UDP",
+            name="UDP Any",
+            comment="UDP Any Service",
+            type="PORT",
+            repository=instance,
+            lock="IMMUTABLE",
             port_start=0,
             port_end=65535,
-            protocol="UDP",
-            repository=instance,
-            lock="IMMUTABLE"
+            protocol="TCP"
         )
 
-        Service.objects.create(
+        # Default UDP/TCP Any Service Collection
+        default_any_collection = Service.objects.create(
             id=uuid.uuid4(),
-            name="ANY ICMP",
-            comment="Any Service Port - ICMP",
-            port_start=0,
-            port_end=65535,
-            protocol="ICMP",
+            name="TCP/UDP Any",
+            comment="TCP&UDP Service Group",
+            type="COLLECTION",
             repository=instance,
-            lock="IMMUTABLE"
+            lock="UNLOCKED"
         )
+
+        # Dummy ICMP Test
+        default_dummy_icmp = Service.objects.create(
+            id=uuid.uuid4(),
+            name="Dummy ICMP",
+            comment="Dummy ICMP service",
+            type="ICMP",
+            repository=instance,
+            lock="UNLOCKED",
+            icmp_type=0,
+            icmp_code=2
+        )
+
+        default_any_collection.members.add(default_udp_any_service)
+        default_any_collection.members.add(default_tcp_any_service)
