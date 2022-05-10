@@ -149,29 +149,13 @@
         "destinations": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
         "services_sources": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
         "services_destinations": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
-        "direction": "incoming",
+         "direction": "INBOUND",
         "action": "DENY",
         "folder": "c411292b-cfb5-4eb0-bc80-eff74ad7c8f7"
     }
 }, {
     "model": "api.rule",
-    "pk": "2f65a159-7243-4708-ad12-420c5fda1ad7",
-    "fields": {
-        "name": "Default rule #2",
-        "device": "5f73a456-7243-4708-ad12-420c5fda1ad7",
-        "repository_id": "5f63a456-7243-4708-ad12-420c5fda1ad7",
-        "comment": "No comment really",
-        "created_on": "2022-04-06T09:02:07.168Z",
-        "modified_on": "2022-04-06T09:02:07.168Z",
-        "services_sources": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
-        "services_destinations": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
-        "direction": "incoming",
-        "action": "DENY",
-        "folder": "c411292b-cfb5-4eb0-bc80-eff74ad7c8f7"
-    }
-},  {
-    "model": "api.rule",
-    "pk": "2f65a159-4243-4708-ad12-420c5fda1ad7",
+    "pk": "2f85a159-7243-4708-ad12-420c5fda1ad7",
     "fields": {
         "name": "Default rule #2",
         "device": "5f73a456-7243-4708-ad12-420c5fda1ad7",
@@ -180,9 +164,130 @@
         "created_on": "2022-04-06T09:02:07.168Z",
         "modified_on": "2022-04-06T09:02:07.168Z",
         "sources": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "destinations": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
         "services_sources": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
         "services_destinations": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
-        "direction": "incoming",
+         "direction": "INBOUND",
+        "action": "DENY",
+        "folder": "c411292b-cfb5-4eb0-bc80-eff74ad7c8f7"
+    }
+},  {
+    "model": "api.rule",
+    "pk": "2f75a159-4243-4708-ad12-420c8fda1ad7",
+    "fields": {
+        "name": "Default rule #3",
+        "device": "5f73a456-7243-4708-ad12-420c5fda1ad7",
+        "repository_id": "5f63a456-7243-4708-ad12-420c5fda1ad7",
+        "comment": "No comment really",
+        "created_on": "2022-04-06T09:02:07.168Z",
+        "modified_on": "2022-04-06T09:02:07.168Z",
+        "sources": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "destinations": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "services_sources": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
+        "services_destinations": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
+         "direction": "INBOUND",
+        "action": "DENY",
+        "folder": "c411292b-cfb5-4eb0-bc80-eff74ad7c8f7"
+    }},  {
+    "model": "api.rule",
+    "pk": "2f75a159-4243-4708-ad12-420c5fda1ad7",
+    "fields": {
+        "name": "Default rule #4",
+        "device": "5f73a456-7243-4708-ad12-420c5fda1ad7",
+        "repository_id": "5f63a456-7243-4708-ad12-420c5fda1ad7",
+        "comment": "No comment really",
+        "created_on": "2022-04-06T09:02:07.168Z",
+        "modified_on": "2022-04-06T09:02:07.168Z",
+        "sources": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "destinations": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "services_sources": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
+        "services_destinations": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
+         "direction": "INBOUND",
+        "action": "DENY",
+        "folder": "c411292b-cfb5-4eb0-bc80-eff74ad7c8f7"
+    }}, {
+    "model": "api.rule",
+    "pk": "2f55a159-4243-4708-ad12-420c5fda1ad7",
+    "fields": {
+        "name": "Default rule #5",
+        "device": "5f73a456-7243-4708-ad12-420c5fda1ad7",
+        "repository_id": "5f63a456-7243-4708-ad12-420c5fda1ad7",
+        "comment": "No comment really",
+        "created_on": "2022-04-06T09:02:07.168Z",
+        "modified_on": "2022-04-06T09:02:07.168Z",
+       "sources": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "destinations": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "services_sources": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
+        "services_destinations": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
+       "direction": "INBOUND",
+        "action": "DENY",
+        "folder": "c411292b-cfb5-4eb0-bc80-eff74ad7c8f7"
+    }}, {
+    "model": "api.rule",
+    "pk": "2f45a159-4243-4708-ad12-420c5fda1ad7",
+    "fields": {
+        "name": "Default rule #6",
+        "device": "5f73a456-7243-4708-ad12-420c5fda1ad7",
+        "repository_id": "5f63a456-7243-4708-ad12-420c5fda1ad7",
+        "comment": "No comment really",
+        "created_on": "2022-04-06T09:02:07.168Z",
+        "modified_on": "2022-04-06T09:02:07.168Z",
+        "sources": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "destinations": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "services_sources": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
+        "services_destinations": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
+         "direction": "INBOUND",
+        "action": "DENY",
+        "folder": "c411292b-cfb5-4eb0-bc80-eff74ad7c8f7"
+    }}, {
+    "model": "api.rule",
+    "pk": "2f35a159-4243-4708-ad12-420c5fda1ad7",
+    "fields": {
+        "name": "Default rule #7",
+        "device": "5f73a456-7243-4708-ad12-420c5fda1ad7",
+        "repository_id": "5f63a456-7243-4708-ad12-420c5fda1ad7",
+        "comment": "No comment really",
+        "created_on": "2022-04-06T09:02:07.168Z",
+        "modified_on": "2022-04-06T09:02:07.168Z",
+        "sources": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "destinations": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "services_sources": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
+        "services_destinations": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
+       "direction": "INBOUND",
+        "action": "DENY",
+        "folder": "c411292b-cfb5-4eb0-bc80-eff74ad7c8f7"
+    }}, {
+    "model": "api.rule",
+    "pk": "2f25a159-4243-4708-ad12-420c5fda1ad7",
+    "fields": {
+        "name": "Default rule #8",
+        "device": "5f73a456-7243-4708-ad12-420c5fda1ad7",
+        "repository_id": "5f63a456-7243-4708-ad12-420c5fda1ad7",
+        "comment": "No comment really",
+        "created_on": "2022-04-06T09:02:07.168Z",
+        "modified_on": "2022-04-06T09:02:07.168Z",
+       "sources": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "destinations": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "services_sources": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
+        "services_destinations": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
+        "direction": "INBOUND",
+        "action": "DENY",
+        "folder": "c411292b-cfb5-4eb0-bc80-eff74ad7c8f7"
+    }}, {
+    "model": "api.rule",
+    "pk": "2f15a159-4243-4708-ad12-420c5fda1ad7",
+    "fields": {
+        "name": "Default rule #9",
+        "device": "5f73a456-7243-4708-ad12-420c5fda1ad7",
+        "repository_id": "5f63a456-7243-4708-ad12-420c5fda1ad7",
+        "comment": "No comment really",
+        "created_on": "2022-04-06T09:02:07.168Z",
+        "modified_on": "2022-04-06T09:02:07.168Z",
+        "sources": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "destinations": ["2f63a156-7241-4708-ad12-420c5fda1ad7"],
+        "services_sources": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
+        "services_destinations": ["5f63a456-7243-4708-ad12-420c8fda1ad7"],
+        "direction": "INBOUND",
         "action": "DENY",
         "folder": "c411292b-cfb5-4eb0-bc80-eff74ad7c8f7"
     }
