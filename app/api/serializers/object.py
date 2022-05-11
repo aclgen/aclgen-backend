@@ -20,15 +20,22 @@ class ObjectSerializer(serializers.ModelSerializer):
         model = Object
         fields = (
             "id",
+            "repository",
             "name",
             "comment",
-            "status",
-            "repository",
+            "type",
+            "lock",
+            # COLLECTION
+            "members",
+            # IPV4
             "range_start",
             "range_end",
+            # IPV6
+            "ipv6_range_start",
+            "ipv6_range_end",
             "created_on",
             "modified_on",
-            "lock",
+            "status",
         )
         read_only_fields = (
             "created_on",
@@ -37,3 +44,22 @@ class ObjectSerializer(serializers.ModelSerializer):
         )
         list_serializer_class = ListObjectSerializer
 
+    def is_value_actually_empty(self, value):
+        if isinstance(value, int):
+            return False
+
+        if value is None or value == "" or not value:
+            return True
+
+        return False
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        for field in self.Meta.fields:
+            try:
+                if self.is_value_actually_empty(rep[field]):
+                    rep.pop(field)
+            except KeyError:
+                pass
+
+        return rep

@@ -30,6 +30,16 @@ class ServiceType(str, Enum):
         return tuple((i.name, i.value) for i in cls)
 
 
+class ObjectType(str, Enum):
+    IPV4 = "IPV4"
+    IPV6 = "IPV6"
+    COLLECTION = "COLLECTION"
+
+    @classmethod
+    def choices(cls):
+        return tuple((i.name, i.value) for i in cls)
+
+
 class RuleDirection(str, Enum):
     INBOUND = "INBOUND"
     OUTBOUND = "OUTBOUND"

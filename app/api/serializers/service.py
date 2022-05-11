@@ -5,7 +5,6 @@ from app.api.utils import update_repository_modified_on
 from app.common.serializers import BaseListSerializer
 
 
-# TODO: Fix M2M bulk update for "members" - ValueError: bulk_update() can only be used with concrete fields.
 class ListServiceSerializer(BaseListSerializer):
     def update(self, instances, validated_data):
         return super(ListServiceSerializer, self).update(instances, validated_data)

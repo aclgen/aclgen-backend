@@ -1,4 +1,5 @@
 from django.utils import timezone
+from rest_framework.exceptions import ValidationError
 
 
 def update_repository_modified_on(instances):
@@ -32,3 +33,14 @@ def update_device_modified_on_target(device):
         device.modified_on = timezone.now()
         device.save()
 
+
+def validate_empty_fields(context, required_empty_fields=[]):
+    for field in context.__dict__:
+        if field in required_empty_fields and context.__dict__[field] is not None:
+            raise ValidationError({
+                "detail": f"{field} cannot have a value as it is a service type of {context.type}"
+            })
+
+
+def raise_validation_error_detail(error):
+    raise ValidationError({"detail": error})
