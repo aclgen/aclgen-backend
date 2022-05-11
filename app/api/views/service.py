@@ -1,6 +1,8 @@
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
+from rest_framework.exceptions import ValidationError
+from django.db.utils import IntegrityError
 from app.api.models.service import Service
 from app.api.serializers.service import ServiceSerializer
 from app.api.models.repository import Repository
@@ -39,6 +41,9 @@ class ServiceViewSet(
 
         return super(ServiceViewSet, self).get_serializer(*args, **kwargs)
 
+    def get_serializer_class(self):
+        return self.serializer_class
+
     def get_object(self):
         return get_object_or_404(self.get_queryset())
 
@@ -56,6 +61,9 @@ class ServiceViewSet(
             self.perform_update(serializer)
 
             data = serializer.data
+            # Workaround for updating ManyToMany fields in bulk
+            self.perform_update_m2m_members(data=request.data)
+
             return Response(data)
         else:
             return super(ServiceViewSet, self).update(request, *args, **kwargs)
@@ -63,6 +71,21 @@ class ServiceViewSet(
     def perform_update(self, serializer):
         serializer.save()
 
+    def perform_update_m2m_members(self, data):
+        errors = []
 
+        for item in data:
+            try:
+                members = item.get("members")
+                if members is not None:
+                    instance = Service.objects.get(id=item["id"])
+                    instance.members.clear()
+                    for member in members:
+                        instance.members.add(member)
 
+                errors.append({})
+            except IntegrityError as e:
+                errors.append({"members": f"Invalid or non-existing member provided for Service with ID {item['id']}"})
 
+        if any(errors):
+            raise ValidationError(errors)

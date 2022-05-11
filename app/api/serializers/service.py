@@ -16,7 +16,6 @@ class ListServiceSerializer(BaseListSerializer):
 
 class ServiceSerializer(serializers.ModelSerializer):
     repository = serializers.HiddenField(default=CurrentRepositoryDefault())
-    members = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Service
@@ -38,10 +37,12 @@ class ServiceSerializer(serializers.ModelSerializer):
             "status",
         )
         read_only_fields = (
-            # "members", TODO: fix M2M batch update here ???
             "created_on",
             "modified_on",
             "status",
+        )
+        m2m_fields = (
+            "members"
         )
         list_serializer_class = ListServiceSerializer
 
@@ -64,6 +65,4 @@ class ServiceSerializer(serializers.ModelSerializer):
                 pass
 
         return rep
-
-
 

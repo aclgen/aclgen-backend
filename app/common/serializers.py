@@ -7,8 +7,6 @@ from django.db import IntegrityError
 
 class BaseListSerializer(serializers.ListSerializer):
     def to_internal_value(self, data):
-        print(data)
-
         if not isinstance(data, list):
             raise ValidationError("The data does not match required type (must be a list)")
 
@@ -53,6 +51,8 @@ class BaseListSerializer(serializers.ListSerializer):
             x
             for x in self.child.Meta.fields
             if x not in self.child.Meta.read_only_fields
+            # if x not in self.child.Meta.m2m_fields # TODO: Add m2m_fields to Meta to Serializers that use bulk update
+            if x != "members"  # TODO: Remove this and use m2m_fields instead
             if x != "id"
         ]
 
