@@ -9,6 +9,7 @@ from app.api.enums import Protocol, LockStatus
 from app.api.mixins import StatusFieldMixin
 from app.api.models.repository import Repository
 from app.api.enums import ServiceType
+from app.api.utils import validate_empty_fields
 from rest_framework.exceptions import ValidationError
 
 
@@ -58,11 +59,7 @@ class Service(
         unique_together = (('id', 'repository'),)
 
     def _validate_empty_fields(self, required_empty_fields=[]):
-        for field in self.__dict__:
-            if field in required_empty_fields and self.__dict__[field] is not None:
-                raise ValidationError({
-                    "detail": f"{field} cannot have a value as it is a service type of {self.type}"
-                })
+        validate_empty_fields(context=self, required_empty_fields=required_empty_fields)
 
     def _validate_type_port(self):
         if self.port_start is None:
@@ -95,6 +92,7 @@ class Service(
         self._validate_empty_fields(required_empty_fields=required_empty_fields)
 
     def save(self, *args, **kwargs):
+        print("Service save()")
         if self.type == ServiceType.PORT:
             self._validate_type_port()
 

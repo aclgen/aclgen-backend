@@ -7,6 +7,7 @@ from app.api.models.service import Service
 from app.api.serializers.service import ServiceSerializer
 from app.api.models.repository import Repository
 from app.util.validation import validate_uuids
+from app.api.enums import ServiceType
 
 
 class ServiceViewSet(
@@ -62,7 +63,7 @@ class ServiceViewSet(
 
             data = serializer.data
             # Workaround for updating ManyToMany fields in bulk
-            self.perform_update_m2m_members(data=request.data)
+            #self.perform_update_m2m_members(data=request.data)
 
             return Response(data)
         else:
@@ -75,17 +76,20 @@ class ServiceViewSet(
         errors = []
 
         for item in data:
-            try:
-                members = item.get("members")
-                if members is not None:
-                    instance = Service.objects.get(id=item["id"])
-                    instance.members.clear()
-                    for member in members:
-                        instance.members.add(member)
+            service_type = item.get("type")
 
-                errors.append({})
-            except IntegrityError as e:
-                errors.append({"members": f"Invalid or non-existing member provided for Service with ID {item['id']}"})
+            if service_type == ServiceType.COLLECTION:
+                try:
+                    members = item.get("members")
+                    if members is not None:
+                        instance = Service.objects.get(id=item["id"])
+                        instance.members.clear()
+                        for member in members:
+                            instance.members.add(member)
+
+                    errors.append({})
+                except IntegrityError as e:
+                    errors.append({"members": f"Invalid or non-existing member provided for Service with ID {item['id']}"})
 
         if any(errors):
             raise ValidationError(errors)
