@@ -5,7 +5,6 @@ import uuid
 from django.urls import reverse
 from rest_framework import status
 from app.api.models.repository import Repository
-from app.api.models.service import Service
 
 
 def str_uuid():
