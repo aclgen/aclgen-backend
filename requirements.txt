@@ -8,3 +8,4 @@ pipe~=1.6.0
 mysqlclient
 pytest~=7.1.2
 rest-framework-generic-relations
+drf-yasg

@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     # External
     'rest_framework',
     'corsheaders',
+    'drf_yasg',
     # Internal
     'app.util',
     'app.common',
