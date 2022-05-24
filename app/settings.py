@@ -27,10 +27,11 @@ SECRET_KEY = 'django-insecure-cy7!x1ioc%=u%6az+pgdmno%&s9lh9!d%f-k8u5ikygs*=hs3q
 DEBUG = True
 
 CORS_ORIGIN_ALLOW_ALL = False
-ALLOWED_HOSTS = ["localhost", "aclgen.com", "api.aclgen.com"]
+ALLOWED_HOSTS = ["localhost", "aclgen.com", "api.aclgen.com", "127.0.0.1"]
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'http://localhost:8000',
+    'http://127.0.0.1:8000',
     'https://aclgen.com',
     'https://api.aclgen.com',
 ]
